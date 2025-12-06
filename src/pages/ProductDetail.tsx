@@ -6,16 +6,17 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { Product, ProductImage } from "@/types/database";
 import { Helmet } from "react-helmet-async";
-import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/hooks/useCart";
 
 export default function ProductDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -44,11 +45,12 @@ export default function ProductDetail() {
     fetchProduct();
   }, [slug, navigate]);
 
-  function handleAddToCart() {
-    toast({
-      title: "Added to cart",
-      description: `${quantity}x ${product?.title} added to your cart.`,
-    });
+  async function handleAddToCart() {
+    if (!product) return;
+    setIsAddingToCart(true);
+    await addToCart(product.id, quantity);
+    setIsAddingToCart(false);
+    setQuantity(1);
   }
 
   if (loading) {
@@ -208,9 +210,10 @@ export default function ProductDetail() {
                 size="xl"
                 className="flex-1"
                 onClick={handleAddToCart}
+                disabled={isAddingToCart}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
-                Add to Cart
+                {isAddingToCart ? "Adding..." : "Add to Cart"}
               </Button>
               <Button variant="outline" size="xl">
                 <Heart className="h-5 w-5" />
