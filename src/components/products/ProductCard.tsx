@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks/useCart";
 import type { Product, ProductImage } from "@/types/database";
 
 interface ProductCardProps {
@@ -8,6 +9,13 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+  
+  function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product.id, 1);
+  }
   const primaryImage = product.product_images?.[0]?.url || product.images?.[0]?.url;
   const hasDiscount = product.compare_at_price && product.compare_at_price > product.price;
   const discountPercent = hasDiscount
@@ -71,7 +79,12 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
           
-          <Button size="icon" variant="gold" className="opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button 
+            size="icon" 
+            variant="gold" 
+            className="opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={handleAddToCart}
+          >
             <ShoppingCart className="h-4 w-4" />
           </Button>
         </div>

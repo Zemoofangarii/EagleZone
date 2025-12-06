@@ -1,0 +1,327 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { CreditCard, Truck, ShoppingBag } from "lucide-react";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+export default function Checkout() {
+  const { items, subtotal, clearCart } = useCart();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [shippingAddress, setShippingAddress] = useState({
+    first_name: "",
+    last_name: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "US",
+    phone: "",
+  });
+
+  const [notes, setNotes] = useState("");
+
+  const shipping = 0; // Free shipping
+  const tax = subtotal * 0.08; // 8% tax
+  const total = subtotal + shipping + tax;
+
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setShippingAddress((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!user) {
+      navigate("/auth?redirect=/checkout");
+      return;
+    }
+
+    if (items.length === 0) {
+      toast({
+        title: "Cart is empty",
+        description: "Please add items to your cart before checking out.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Create order
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert([{
+          user_id: user.id,
+          order_number: `ORD-${Date.now()}`, // Will be overwritten by trigger
+          subtotal,
+          tax,
+          shipping,
+          total,
+          shipping_address: shippingAddress as any,
+          notes,
+          status: "pending",
+        }])
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = items.map((item) => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        variant_id: item.variant_id,
+        title: item.product.title,
+        sku: item.product.slug,
+        quantity: item.quantity,
+        unit_price: item.product.price,
+        total: item.product.price * item.quantity,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      // Clear cart
+      await clearCart();
+
+      toast({
+        title: "Order placed successfully!",
+        description: `Your order #${order.order_number} has been placed.`,
+      });
+
+      navigate(`/order-confirmation/${order.id}`);
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast({
+        title: "Error",
+        description: "Failed to place order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (items.length === 0) {
+    return (
+      <MainLayout>
+        <div className="container py-16 text-center">
+          <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Your cart is empty</h1>
+          <p className="text-muted-foreground mb-6">Add items to your cart to proceed with checkout.</p>
+          <Button variant="gold" onClick={() => navigate("/products")}>
+            Browse Products
+          </Button>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  return (
+    <MainLayout>
+      <Helmet>
+        <title>Checkout - LUXE</title>
+        <meta name="description" content="Complete your purchase" />
+      </Helmet>
+
+      <div className="container py-8 md:py-12">
+        <h1 className="font-display text-3xl md:text-4xl font-bold mb-8">Checkout</h1>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Form */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Shipping Address */}
+              <div className="bg-card rounded-lg border border-border p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Truck className="h-5 w-5 text-primary" />
+                  </div>
+                  <h2 className="font-display text-xl font-bold">Shipping Address</h2>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="first_name">First Name</Label>
+                    <Input
+                      id="first_name"
+                      name="first_name"
+                      value={shippingAddress.first_name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last_name">Last Name</Label>
+                    <Input
+                      id="last_name"
+                      name="last_name"
+                      value={shippingAddress.last_name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="address_line1">Address</Label>
+                    <Input
+                      id="address_line1"
+                      name="address_line1"
+                      value={shippingAddress.address_line1}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="address_line2">Apartment, suite, etc. (optional)</Label>
+                    <Input
+                      id="address_line2"
+                      name="address_line2"
+                      value={shippingAddress.address_line2}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      name="city"
+                      value={shippingAddress.city}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                      id="state"
+                      name="state"
+                      value={shippingAddress.state}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="postal_code">ZIP Code</Label>
+                    <Input
+                      id="postal_code"
+                      name="postal_code"
+                      value={shippingAddress.postal_code}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={shippingAddress.phone}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Notes */}
+              <div className="bg-card rounded-lg border border-border p-6">
+                <h2 className="font-display text-xl font-bold mb-4">Order Notes (Optional)</h2>
+                <Textarea
+                  placeholder="Any special instructions for your order..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                />
+              </div>
+
+              {/* Payment - Placeholder */}
+              <div className="bg-card rounded-lg border border-border p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                  </div>
+                  <h2 className="font-display text-xl font-bold">Payment</h2>
+                </div>
+                <p className="text-muted-foreground">
+                  Payment will be collected upon delivery (Cash on Delivery).
+                </p>
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24 bg-card rounded-lg border border-border p-6 space-y-4">
+                <h2 className="font-display text-xl font-bold">Order Summary</h2>
+
+                {/* Items */}
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        {item.product.title} × {item.quantity}
+                      </span>
+                      <span className="font-medium">
+                        ${(item.product.price * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-border pt-4 space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span className="font-medium text-green-500">Free</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Tax (8%)</span>
+                    <span className="font-medium">${tax.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                <div className="border-t border-border pt-4">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total</span>
+                    <span>${total.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="gold"
+                  size="lg"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Placing Order..." : "Place Order"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </MainLayout>
+  );
+}
