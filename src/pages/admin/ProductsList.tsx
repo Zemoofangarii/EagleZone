@@ -22,7 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Product } from "@/types/database";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function ProductsList() {
   const [products, setProducts] = useState<Product[]>([]);

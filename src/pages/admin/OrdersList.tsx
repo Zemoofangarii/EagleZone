@@ -12,7 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import type { Order } from "@/types/database";
 import { format } from "date-fns";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const statusColors: Record<string, string> = {
   pending: "bg-amber-500/20 text-amber-500",

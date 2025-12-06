@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const productSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -105,9 +105,17 @@ export default function ProductForm() {
   async function onSubmit(data: ProductFormData) {
     setLoading(true);
 
-    const productData = {
-      ...data,
+    const productPayload = {
+      title: data.title,
+      slug: data.slug,
+      short_description: data.short_description || null,
+      description: data.description || null,
+      price: data.price,
       compare_at_price: data.compare_at_price || null,
+      seo_title: data.seo_title || null,
+      seo_description: data.seo_description || null,
+      published: data.published,
+      featured: data.featured,
     };
 
     let error;
@@ -115,13 +123,13 @@ export default function ProductForm() {
     if (isEditing) {
       const result = await supabase
         .from("products")
-        .update(productData)
+        .update(productPayload)
         .eq("id", id);
       error = result.error;
     } else {
       const result = await supabase
         .from("products")
-        .insert([productData]);
+        .insert([productPayload]);
       error = result.error;
     }
 

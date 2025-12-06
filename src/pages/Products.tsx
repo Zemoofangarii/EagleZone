@@ -5,7 +5,7 @@ import { ProductGrid } from "@/components/products/ProductGrid";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { Product, Category } from "@/types/database";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Filter, SlidersHorizontal } from "lucide-react";
 import {
   Select,

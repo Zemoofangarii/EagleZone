@@ -21,7 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Category } from "@/types/database";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function CategoriesList() {
   const [categories, setCategories] = useState<Category[]>([]);
