@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { signIn, signUp } from "@/lib/auth";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email"),

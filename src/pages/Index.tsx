@@ -6,7 +6,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { supabase } from "@/integrations/supabase/client";
 import type { Product } from "@/types/database";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const features = [
   {

@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const categorySchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -87,23 +87,28 @@ export default function CategoryForm() {
   async function onSubmit(data: CategoryFormData) {
     setLoading(true);
 
-    const categoryData = {
-      ...data,
-      image_url: data.image_url || null,
-    };
-
     let error;
 
     if (isEditing) {
       const result = await supabase
         .from("categories")
-        .update(categoryData)
+        .update({
+          name: data.name,
+          slug: data.slug,
+          description: data.description || null,
+          image_url: data.image_url || null,
+        })
         .eq("id", id);
       error = result.error;
     } else {
       const result = await supabase
         .from("categories")
-        .insert([categoryData]);
+        .insert([{
+          name: data.name,
+          slug: data.slug,
+          description: data.description || null,
+          image_url: data.image_url || null,
+        }]);
       error = result.error;
     }
 
