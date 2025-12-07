@@ -11,9 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Loader2, Save, Plus, X } from "lucide-react";
+import { ArrowLeft, Loader2, Save, X } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
 const productSchema = z.object({
@@ -38,6 +39,12 @@ interface ProductImage {
   position: number;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export default function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -45,6 +52,8 @@ export default function ProductForm() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(!!id);
   const [images, setImages] = useState<ProductImage[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const isEditing = !!id;
 
   const {
@@ -65,6 +74,7 @@ export default function ProductForm() {
   const title = watch("title");
 
   useEffect(() => {
+    fetchCategories();
     if (id) {
       fetchProduct();
     }
@@ -80,6 +90,17 @@ export default function ProductForm() {
       setValue("slug", slug);
     }
   }, [title, isEditing, setValue]);
+
+  async function fetchCategories() {
+    const { data } = await supabase
+      .from("categories")
+      .select("id, name, slug")
+      .order("name");
+    
+    if (data) {
+      setCategories(data);
+    }
+  }
 
   async function fetchProduct() {
     const { data, error } = await supabase
@@ -119,6 +140,16 @@ export default function ProductForm() {
         }))
       );
     }
+
+    // Fetch product categories
+    const { data: productCategories } = await supabase
+      .from("product_categories")
+      .select("category_id")
+      .eq("product_id", id);
+
+    if (productCategories) {
+      setSelectedCategories(productCategories.map((pc) => pc.category_id));
+    }
     
     setFetching(false);
   }
@@ -140,7 +171,24 @@ export default function ProductForm() {
     );
   }
 
+  function toggleCategory(categoryId: string) {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  }
+
   async function onSubmit(data: ProductFormData) {
+    if (selectedCategories.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one category.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     const productPayload = {
@@ -207,6 +255,28 @@ export default function ProductForm() {
 
         if (imgError) {
           console.error("Image save error:", imgError);
+        }
+      }
+
+      // Handle categories
+      // Delete existing product categories
+      if (isEditing) {
+        await supabase.from("product_categories").delete().eq("product_id", productId);
+      }
+
+      // Insert selected categories
+      if (selectedCategories.length > 0) {
+        const categoryPayloads = selectedCategories.map((categoryId) => ({
+          product_id: productId,
+          category_id: categoryId,
+        }));
+
+        const { error: catError } = await supabase
+          .from("product_categories")
+          .insert(categoryPayloads);
+
+        if (catError) {
+          console.error("Category save error:", catError);
         }
       }
     }
@@ -378,6 +448,35 @@ export default function ProductForm() {
 
             {/* Sidebar */}
             <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Categories *</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {categories.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No categories available. Create a category first.
+                    </p>
+                  ) : (
+                    categories.map((category) => (
+                      <div key={category.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={category.id}
+                          checked={selectedCategories.includes(category.id)}
+                          onCheckedChange={() => toggleCategory(category.id)}
+                        />
+                        <label
+                          htmlFor={category.id}
+                          className="text-sm font-medium leading-none cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {category.name}
+                        </label>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>Product Images</CardTitle>

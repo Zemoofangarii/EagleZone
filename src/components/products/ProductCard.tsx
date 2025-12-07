@@ -5,7 +5,10 @@ import { useCart } from "@/hooks/useCart";
 import type { Product, ProductImage } from "@/types/database";
 
 interface ProductCardProps {
-  product: Product & { product_images?: ProductImage[] };
+  product: Product & { 
+    product_images?: ProductImage[];
+    categories?: { id: string; name: string; slug: string }[];
+  };
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -55,6 +58,16 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Content */}
       <div className="p-4 space-y-2">
+        {/* Category Badge */}
+        {product.categories && product.categories.length > 0 && (
+          <Link 
+            to={`/categories/${product.categories[0].slug}`}
+            className="text-xs text-primary hover:underline"
+          >
+            {product.categories[0].name}
+          </Link>
+        )}
+
         <Link to={`/products/${product.slug}`}>
           <h3 className="font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
             {product.title}
