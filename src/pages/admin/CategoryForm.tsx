@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
@@ -18,7 +19,7 @@ const categorySchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1, "Slug is required"),
   description: z.string().optional(),
-  image_url: z.string().url().optional().or(z.literal("")),
+  image_url: z.string().optional(),
 });
 
 type CategoryFormData = z.infer<typeof categorySchema>;
@@ -205,19 +206,12 @@ export default function CategoryForm() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
-                <Input
-                  id="image_url"
-                  type="url"
-                  placeholder="https://example.com/image.jpg"
-                  {...register("image_url")}
-                  className="bg-secondary"
-                />
-                {errors.image_url && (
-                  <p className="text-sm text-destructive">{errors.image_url.message}</p>
-                )}
-              </div>
+              <ImageUpload
+                value={watch("image_url") || ""}
+                onChange={(url) => setValue("image_url", url)}
+                folder="categories"
+                label="Category Image"
+              />
             </CardContent>
           </Card>
 
