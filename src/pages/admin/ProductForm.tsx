@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Plus, X } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
 const productSchema = z.object({
@@ -30,12 +31,20 @@ const productSchema = z.object({
 
 type ProductFormData = z.infer<typeof productSchema>;
 
+interface ProductImage {
+  id?: string;
+  url: string;
+  alt_text?: string;
+  position: number;
+}
+
 export default function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(!!id);
+  const [images, setImages] = useState<ProductImage[]>([]);
   const isEditing = !!id;
 
   const {
@@ -75,7 +84,7 @@ export default function ProductForm() {
   async function fetchProduct() {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("*, product_images(*)")
       .eq("id", id)
       .single();
 
@@ -99,7 +108,36 @@ export default function ProductForm() {
     setValue("seo_description", data.seo_description || "");
     setValue("published", data.published);
     setValue("featured", data.featured);
+    
+    if (data.product_images) {
+      setImages(
+        data.product_images.map((img: any) => ({
+          id: img.id,
+          url: img.url,
+          alt_text: img.alt_text,
+          position: img.position,
+        }))
+      );
+    }
+    
     setFetching(false);
+  }
+
+  function addImage(url: string) {
+    setImages((prev) => [
+      ...prev,
+      { url, position: prev.length, alt_text: "" },
+    ]);
+  }
+
+  function removeImage(index: number) {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function updateImageAlt(index: number, alt_text: string) {
+    setImages((prev) =>
+      prev.map((img, i) => (i === index ? { ...img, alt_text } : img))
+    );
   }
 
   async function onSubmit(data: ProductFormData) {
@@ -119,6 +157,7 @@ export default function ProductForm() {
     };
 
     let error;
+    let productId = id;
 
     if (isEditing) {
       const result = await supabase
@@ -129,11 +168,12 @@ export default function ProductForm() {
     } else {
       const result = await supabase
         .from("products")
-        .insert([productPayload]);
+        .insert([productPayload])
+        .select("id")
+        .single();
       error = result.error;
+      productId = result.data?.id;
     }
-
-    setLoading(false);
 
     if (error) {
       toast({
@@ -141,8 +181,37 @@ export default function ProductForm() {
         description: error.message,
         variant: "destructive",
       });
+      setLoading(false);
       return;
     }
+
+    // Handle images
+    if (productId) {
+      // Delete existing images if editing
+      if (isEditing) {
+        await supabase.from("product_images").delete().eq("product_id", productId);
+      }
+
+      // Insert new images
+      if (images.length > 0) {
+        const imagePayloads = images.map((img, index) => ({
+          product_id: productId,
+          url: img.url,
+          alt_text: img.alt_text || null,
+          position: index,
+        }));
+
+        const { error: imgError } = await supabase
+          .from("product_images")
+          .insert(imagePayloads);
+
+        if (imgError) {
+          console.error("Image save error:", imgError);
+        }
+      }
+    }
+
+    setLoading(false);
 
     toast({
       title: isEditing ? "Product updated" : "Product created",
@@ -309,6 +378,45 @@ export default function ProductForm() {
 
             {/* Sidebar */}
             <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Product Images</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {images.map((img, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={img.url}
+                        alt={img.alt_text || `Product ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => removeImage(index)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                      <Input
+                        placeholder="Alt text"
+                        value={img.alt_text || ""}
+                        onChange={(e) => updateImageAlt(index, e.target.value)}
+                        className="mt-1 text-xs bg-secondary"
+                      />
+                    </div>
+                  ))}
+                  
+                  <ImageUpload
+                    value=""
+                    onChange={addImage}
+                    folder="products"
+                    label={images.length === 0 ? "Add Image" : "Add Another Image"}
+                  />
+                </CardContent>
+              </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>Status</CardTitle>
