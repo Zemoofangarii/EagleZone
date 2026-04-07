@@ -29,7 +29,7 @@ export default function AdminDashboard() {
         supabase.from("products").select("id", { count: "exact", head: true }),
         supabase.from("categories").select("id", { count: "exact", head: true }),
         supabase.from("orders").select("id", { count: "exact", head: true }),
-        supabase.from("user_profiles").select("id", { count: "exact", head: true }),
+        supabase.from("profiles").select("id", { count: "exact", head: true }),
       ]);
 
       setStats({
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>Dashboard - LUXE Admin</title>
+        <title>Dashboard - High Mirror Admin</title>
       </Helmet>
 
       <div className="space-y-8">
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent className="space-y-4 text-sm text-muted-foreground">
               <p>
-                Welcome to your LUXE admin panel! Here you can manage your products,
+                Welcome to your High Mirror admin panel! Here you can manage your products,
                 categories, orders, and more.
               </p>
               <ul className="space-y-2">

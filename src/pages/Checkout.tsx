@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { CreditCard, Truck, ShoppingBag } from "lucide-react";
@@ -14,24 +14,42 @@ import { supabase } from "@/integrations/supabase/client";
 
 export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Split full_name into first and last name
+  const nameParts = profile?.full_name?.split(" ") || [];
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || "";
+
   const [shippingAddress, setShippingAddress] = useState({
-    first_name: "",
-    last_name: "",
+    first_name: firstName,
+    last_name: lastName,
     address_line1: "",
     address_line2: "",
     city: "",
     state: "",
     postal_code: "",
     country: "US",
-    phone: "",
+    phone: profile?.phone || "",
   });
 
   const [notes, setNotes] = useState("");
+
+  // Update form when profile loads
+  useEffect(() => {
+    if (profile) {
+      const parts = profile.full_name?.split(" ") || [];
+      setShippingAddress((prev) => ({
+        ...prev,
+        first_name: prev.first_name || parts[0] || "",
+        last_name: prev.last_name || parts.slice(1).join(" ") || "",
+        phone: prev.phone || profile.phone || "",
+      }));
+    }
+  }, [profile]);
 
   const shipping = 0; // Free shipping
   const tax = subtotal * 0.08; // 8% tax
@@ -138,7 +156,7 @@ export default function Checkout() {
   return (
     <MainLayout>
       <Helmet>
-        <title>Checkout - LUXE</title>
+        <title>Checkout - High Mirror</title>
         <meta name="description" content="Complete your purchase" />
       </Helmet>
 

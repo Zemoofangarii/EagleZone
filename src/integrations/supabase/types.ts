@@ -71,7 +71,7 @@ export type Database = {
             foreignKeyName: "addresses_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -191,7 +191,7 @@ export type Database = {
             foreignKeyName: "carts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -278,7 +278,7 @@ export type Database = {
             foreignKeyName: "coupon_redemptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -396,7 +396,7 @@ export type Database = {
             foreignKeyName: "media_uploaded_by_fkey"
             columns: ["uploaded_by"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -519,7 +519,7 @@ export type Database = {
             foreignKeyName: "orders_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -783,7 +783,7 @@ export type Database = {
             foreignKeyName: "reviews_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -827,7 +827,7 @@ export type Database = {
         }
         Relationships: []
       }
-      user_profiles: {
+      profiles: {
         Row: {
           avatar_url: string | null
           created_at: string | null
@@ -861,34 +861,27 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          role_id: string
+          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          role_id: string
+          role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          role_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_roles_role_id_fkey"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "roles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

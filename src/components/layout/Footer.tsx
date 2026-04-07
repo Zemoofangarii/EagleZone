@@ -8,7 +8,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              <span className="font-display text-2xl font-bold gradient-text">LUXE</span>
+              <span className="font-display text-2xl font-bold gradient-text">High Mirror</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               Premium products curated for the discerning customer.
@@ -66,7 +66,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center">
-            © {new Date().getFullYear()} LUXE. All rights reserved.
+            © {new Date().getFullYear()} High Mirror. All rights reserved.
           </p>
         </div>
       </div>

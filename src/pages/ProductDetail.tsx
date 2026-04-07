@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Product, ProductImage } from "@/types/database";
 import { Helmet } from "react-helmet-async";
 import { useCart } from "@/hooks/useCart";
+import { motion, AnimatePresence } from "framer-motion";
+import { FadeUp, imageReveal } from "@/components/animations/MotionWrappers";
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -78,7 +80,7 @@ export default function ProductDetail() {
   return (
     <MainLayout>
       <Helmet>
-        <title>{product.seo_title || product.title} - LUXE</title>
+        <title>{product.seo_title || product.title} - High Mirror</title>
         <meta name="description" content={product.seo_description || product.short_description || ""} />
         <meta property="og:title" content={product.seo_title || product.title} />
         <meta property="og:description" content={product.seo_description || product.short_description || ""} />
@@ -103,39 +105,59 @@ export default function ProductDetail() {
 
       <div className="container py-8 md:py-12">
         {/* Back Button */}
-        <Button
-          variant="ghost"
-          className="mb-6"
-          onClick={() => navigate("/products")}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Products
-        </Button>
+          <Button
+            variant="ghost"
+            className="mb-6"
+            onClick={() => navigate("/products")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Products
+          </Button>
+        </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Images */}
-          <div className="space-y-4">
+          <motion.div
+            className="space-y-4"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+          >
             <div className="aspect-square rounded-lg overflow-hidden bg-card border border-border">
-              {images.length > 0 ? (
-                <img
-                  src={images[selectedImage]?.url}
-                  alt={images[selectedImage]?.alt_text || product.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-muted">
-                  <span className="text-muted-foreground">No image</span>
-                </div>
-              )}
+              <AnimatePresence mode="wait">
+                {images.length > 0 ? (
+                  <motion.img
+                    key={selectedImage}
+                    src={images[selectedImage]?.url}
+                    alt={images[selectedImage]?.alt_text || product.title}
+                    className="w-full h-full object-cover"
+                    variants={imageReveal}
+                    initial="hidden"
+                    animate="visible"
+                    exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.3 } }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-muted">
+                    <span className="text-muted-foreground">No image</span>
+                  </div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Thumbnails */}
             {images.length > 1 && (
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {images.map((img: ProductImage, idx: number) => (
-                  <button
+                  <motion.button
                     key={img.id}
                     onClick={() => setSelectedImage(idx)}
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.95 }}
                     className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
                       selectedImage === idx
                         ? "border-primary"
@@ -147,87 +169,124 @@ export default function ProductDetail() {
                       alt={img.alt_text || `${product.title} ${idx + 1}`}
                       className="w-full h-full object-cover"
                     />
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Details */}
           <div className="space-y-6">
-            <div>
-              <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-                {product.title}
-              </h1>
-              {product.short_description && (
-                <p className="text-muted-foreground">{product.short_description}</p>
-              )}
-            </div>
+            <FadeUp delay={0.2}>
+              <div>
+                <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
+                  {product.title}
+                </h1>
+                {product.short_description && (
+                  <p className="text-muted-foreground">{product.short_description}</p>
+                )}
+              </div>
+            </FadeUp>
 
             {/* Price */}
-            <div className="flex items-center gap-4">
-              <span className="text-3xl font-bold">${product.price.toFixed(2)}</span>
-              {hasDiscount && (
-                <>
-                  <span className="text-xl text-muted-foreground line-through">
-                    ${product.compare_at_price!.toFixed(2)}
-                  </span>
-                  <span className="bg-destructive text-destructive-foreground text-sm font-bold px-2 py-1 rounded">
-                    Save ${(product.compare_at_price! - product.price).toFixed(2)}
-                  </span>
-                </>
-              )}
-            </div>
+            <FadeUp delay={0.3}>
+              <div className="flex items-center gap-4">
+                <motion.span
+                  className="text-3xl font-bold"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.4 }}
+                >
+                  ${product.price.toFixed(2)}
+                </motion.span>
+                {hasDiscount && (
+                  <>
+                    <span className="text-xl text-muted-foreground line-through">
+                      ${product.compare_at_price!.toFixed(2)}
+                    </span>
+                    <motion.span
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 12, delay: 0.5 }}
+                      className="bg-destructive text-destructive-foreground text-sm font-bold px-2 py-1 rounded"
+                    >
+                      Save ${(product.compare_at_price! - product.price).toFixed(2)}
+                    </motion.span>
+                  </>
+                )}
+              </div>
+            </FadeUp>
 
             {/* Quantity */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Quantity</label>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border border-border rounded-lg">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="w-12 text-center font-medium">{quantity}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setQuantity(quantity + 1)}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+            <FadeUp delay={0.4}>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Quantity</label>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center border border-border rounded-lg">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={quantity}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.15 }}
+                        className="w-12 text-center font-medium"
+                      >
+                        {quantity}
+                      </motion.span>
+                    </AnimatePresence>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setQuantity(quantity + 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </FadeUp>
 
             {/* Actions */}
-            <div className="flex gap-4">
-              <Button
-                variant="gold"
-                size="xl"
-                className="flex-1"
-                onClick={handleAddToCart}
-                disabled={isAddingToCart}
-              >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                {isAddingToCart ? "Adding..." : "Add to Cart"}
-              </Button>
-              <Button variant="outline" size="xl">
-                <Heart className="h-5 w-5" />
-              </Button>
-            </div>
+            <FadeUp delay={0.5}>
+              <div className="flex gap-4">
+                <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    variant="gold"
+                    size="xl"
+                    className="w-full"
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                  >
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    {isAddingToCart ? "Adding..." : "Add to Cart"}
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button variant="outline" size="xl">
+                    <Heart className="h-5 w-5" />
+                  </Button>
+                </motion.div>
+              </div>
+            </FadeUp>
 
             {/* Description */}
             {product.description && (
-              <div className="pt-6 border-t border-border">
-                <h3 className="font-semibold mb-3">Description</h3>
-                <div className="prose prose-sm text-muted-foreground">
-                  {product.description}
+              <FadeUp delay={0.6}>
+                <div className="pt-6 border-t border-border">
+                  <h3 className="font-semibold mb-3">Description</h3>
+                  <div className="prose prose-sm text-muted-foreground">
+                    {product.description}
+                  </div>
                 </div>
-              </div>
+              </FadeUp>
             )}
           </div>
         </div>

@@ -7,6 +7,9 @@ import { ProductGrid } from "@/components/products/ProductGrid";
 import { supabase } from "@/integrations/supabase/client";
 import type { Product } from "@/types/database";
 import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion";
+import { FadeUp, FadeInView, staggerContainer, staggerItem } from "@/components/animations/MotionWrappers";
+import { useParallax, useScrollReveal } from "@/hooks/useScrollAnimation";
 
 const features = [
   {
@@ -29,6 +32,9 @@ const features = [
 export default function Index() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const parallaxRef = useParallax(0.3);
+  const featuresRef = useScrollReveal({ y: 40, stagger: 0.12 });
+  const ctaRef = useScrollReveal({ y: 50, duration: 0.8 });
 
   useEffect(() => {
     async function fetchFeaturedProducts() {
@@ -54,12 +60,12 @@ export default function Index() {
   return (
     <MainLayout>
       <Helmet>
-        <title>LUXE - Premium E-Commerce Store</title>
+        <title>High Mirror - Premium E-Commerce Store</title>
         <meta
           name="description"
           content="Discover premium products curated for the discerning customer. Free shipping on orders over $100."
         />
-        <meta property="og:title" content="LUXE - Premium E-Commerce Store" />
+        <meta property="og:title" content="High Mirror - Premium E-Commerce Store" />
         <meta
           property="og:description"
           content="Discover premium products curated for the discerning customer."
@@ -69,46 +75,78 @@ export default function Index() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl" />
-        
+        <div
+          ref={parallaxRef}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl"
+        />
+
         <div className="container relative py-24 md:py-32 lg:py-40">
-          <div className="max-w-3xl mx-auto text-center space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm text-muted-foreground">New Collection Available</span>
-            </div>
-            
-            <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-              Elevate Your{" "}
-              <span className="gradient-text">Style</span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto">
-              Discover premium products curated for the discerning customer. 
-              Quality meets elegance in every piece.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/products">
-                <Button variant="hero" size="xl">
-                  Shop Now
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/categories">
-                <Button variant="outline" size="xl">
-                  Explore Categories
-                </Button>
-              </Link>
-            </div>
+          <div className="max-w-3xl mx-auto text-center space-y-8">
+            <FadeUp delay={0.1}>
+              <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
+                <motion.div
+                  animate={{ rotate: [0, 15, -15, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                >
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </motion.div>
+                <span className="text-sm text-muted-foreground">New Collection Available</span>
+              </div>
+            </FadeUp>
+
+            <FadeUp delay={0.25} y={40}>
+              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+                Elevate Your{" "}
+                <motion.span
+                  className="gradient-text inline-block"
+                  animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                  style={{ backgroundSize: "200% auto" }}
+                >
+                  Style
+                </motion.span>
+              </h1>
+            </FadeUp>
+
+            <FadeUp delay={0.4}>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto">
+                Discover premium products curated for the discerning customer.
+                Quality meets elegance in every piece.
+              </p>
+            </FadeUp>
+
+            <FadeUp delay={0.55}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/products">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+                    <Button variant="hero" size="xl">
+                      Shop Now
+                      <motion.span
+                        animate={{ x: [0, 4, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        <ArrowRight className="h-5 w-5" />
+                      </motion.span>
+                    </Button>
+                  </motion.div>
+                </Link>
+                <Link to="/categories">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+                    <Button variant="outline" size="xl">
+                      Explore Categories
+                    </Button>
+                  </motion.div>
+                </Link>
+              </div>
+            </FadeUp>
           </div>
         </div>
       </section>
 
-      {/* Features */}
+      {/* Features — GSAP stagger reveal on scroll */}
       <section className="border-y border-border bg-card/30">
         <div className="container py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature) => (
               <div key={feature.title} className="flex items-center gap-4 justify-center">
                 <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -124,39 +162,43 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products — Framer Motion viewport stagger */}
       <section className="py-16 md:py-24">
         <div className="container">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="font-display text-3xl md:text-4xl font-bold">Featured Products</h2>
-              <p className="text-muted-foreground mt-2">Hand-picked selections for you</p>
-            </div>
-            <Link to="/products?featured=true">
-              <Button variant="ghost">
-                View All
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-          
-          <ProductGrid products={featuredProducts} loading={loading} />
-          
-          {!loading && featuredProducts.length === 0 && (
-            <div className="text-center py-16 bg-card/50 rounded-lg border border-border">
-              <p className="text-muted-foreground mb-4">No featured products yet.</p>
-              <Link to="/admin/products">
-                <Button variant="gold">Add Products</Button>
+          <FadeInView direction="up">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="font-display text-3xl md:text-4xl font-bold">Featured Products</h2>
+                <p className="text-muted-foreground mt-2">Hand-picked selections for you</p>
+              </div>
+              <Link to="/products?featured=true">
+                <Button variant="ghost">
+                  View All
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
               </Link>
             </div>
+          </FadeInView>
+
+          <ProductGrid products={featuredProducts} loading={loading} />
+
+          {!loading && featuredProducts.length === 0 && (
+            <FadeInView>
+              <div className="text-center py-16 bg-card/50 rounded-lg border border-border">
+                <p className="text-muted-foreground mb-4">No featured products yet.</p>
+                <Link to="/admin/products">
+                  <Button variant="gold">Add Products</Button>
+                </Link>
+              </div>
+            </FadeInView>
           )}
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section — GSAP scroll reveal */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-card via-card to-primary/5">
         <div className="container">
-          <div className="max-w-2xl mx-auto text-center space-y-6">
+          <div ref={ctaRef} className="max-w-2xl mx-auto text-center space-y-6">
             <h2 className="font-display text-3xl md:text-4xl font-bold">
               Join Our Newsletter
             </h2>
@@ -167,11 +209,13 @@ export default function Index() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 px-4 py-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary transition-shadow duration-300"
               />
-              <Button variant="gold" type="submit">
-                Subscribe
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+                <Button variant="gold" type="submit">
+                  Subscribe
+                </Button>
+              </motion.div>
             </form>
           </div>
         </div>

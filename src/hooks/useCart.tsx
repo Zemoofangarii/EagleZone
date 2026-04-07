@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
+import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -29,107 +30,134 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+function getSessionId(): string {
+  let sessionId = localStorage.getItem("cart_session_id");
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem("cart_session_id", sessionId);
+  }
+  return sessionId;
+}
+
+async function findOrCreateCart(currentUser: User | null): Promise<string | null> {
+  try {
+    let query = supabase.from("carts").select("id").limit(1);
+
+    if (currentUser) {
+      query = query.eq("user_id", currentUser.id);
+    } else {
+      query = query.eq("session_id", getSessionId()).is("user_id", null);
+    }
+
+    const { data: existingCarts } = await query;
+
+    if (existingCarts && existingCarts.length > 0) {
+      return existingCarts[0].id;
+    }
+
+    // Create new cart
+    const cartData = currentUser
+      ? { user_id: currentUser.id }
+      : { session_id: getSessionId() };
+
+    const { data: newCart, error } = await supabase
+      .from("carts")
+      .insert(cartData)
+      .select("id")
+      .single();
+
+    if (error) throw error;
+
+    return newCart.id;
+  } catch (error) {
+    console.error("Error getting/creating cart:", error);
+    return null;
+  }
+}
+
+async function loadCartItems(cartId: string): Promise<CartItemWithProduct[]> {
+  const { data, error } = await supabase
+    .from("cart_items")
+    .select(`
+      *,
+      product:products (
+        *,
+        product_images (*),
+        product_variants (*)
+      )
+    `)
+    .eq("cart_id", cartId);
+
+  if (error) throw error;
+
+  return (data as unknown as CartItemWithProduct[]) || [];
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [items, setItems] = useState<CartItemWithProduct[]>([]);
-  const [cartId, setCartId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const cartIdRef = useRef<string | null>(null);
 
-  // Get or create cart
-  const getOrCreateCart = useCallback(async (): Promise<string | null> => {
-    if (cartId) return cartId;
+  // Get cart ID, finding or creating if needed
+  async function getCartId(): Promise<string | null> {
+    if (cartIdRef.current) return cartIdRef.current;
 
-    try {
-      // Try to find existing cart
-      let query = supabase.from("carts").select("id");
-      
-      if (user) {
-        query = query.eq("user_id", user.id);
-      } else {
-        // Use session ID for anonymous users
-        const sessionId = getSessionId();
-        query = query.eq("session_id", sessionId).is("user_id", null);
-      }
-
-      const { data: existingCart } = await query.maybeSingle();
-
-      if (existingCart) {
-        setCartId(existingCart.id);
-        return existingCart.id;
-      }
-
-      // Create new cart
-      const cartData = user
-        ? { user_id: user.id }
-        : { session_id: getSessionId() };
-
-      const { data: newCart, error } = await supabase
-        .from("carts")
-        .insert(cartData)
-        .select("id")
-        .single();
-
-      if (error) throw error;
-
-      setCartId(newCart.id);
-      return newCart.id;
-    } catch (error) {
-      console.error("Error getting/creating cart:", error);
-      return null;
-    }
-  }, [user, cartId]);
-
-  // Get session ID for anonymous users
-  function getSessionId(): string {
-    let sessionId = localStorage.getItem("cart_session_id");
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-      localStorage.setItem("cart_session_id", sessionId);
-    }
-    return sessionId;
+    const id = await findOrCreateCart(user);
+    cartIdRef.current = id;
+    return id;
   }
 
-  // Fetch cart items
-  const fetchCartItems = useCallback(async () => {
-    const currentCartId = await getOrCreateCart();
+  // Fetch cart items from database
+  async function fetchCartItems() {
+    const currentCartId = await getCartId();
     if (!currentCartId) return;
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("cart_items")
-        .select(`
-          *,
-          product:products (
-            *,
-            product_images (*),
-            product_variants (*)
-          )
-        `)
-        .eq("cart_id", currentCartId);
-
-      if (error) throw error;
-
-      setItems((data as unknown as CartItemWithProduct[]) || []);
+      const loadedItems = await loadCartItems(currentCartId);
+      setItems(loadedItems);
     } catch (error) {
       console.error("Error fetching cart items:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [getOrCreateCart]);
+  }
 
   // Load cart on mount and when user changes
   useEffect(() => {
-    // Reset cart when user changes
-    setCartId(null);
-    setItems([]);
-    fetchCartItems();
-  }, [user?.id]);
+    if (authLoading) return;
+
+    // Reset and reload
+    cartIdRef.current = null;
+
+    async function init() {
+      const id = await findOrCreateCart(user);
+      if (!id) {
+        setItems([]);
+        return;
+      }
+      cartIdRef.current = id;
+
+      setIsLoading(true);
+      try {
+        const loadedItems = await loadCartItems(id);
+        setItems(loadedItems);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+        setItems([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    init();
+  }, [user?.id, authLoading]);
 
   // Add to cart
   async function addToCart(productId: string, quantity = 1, variantId: string | null = null) {
-    const currentCartId = await getOrCreateCart();
+    const currentCartId = await getCartId();
     if (!currentCartId) {
       toast({
         title: "Error",
@@ -146,12 +174,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       );
 
       if (existingItem) {
-        // Update quantity
         await updateQuantity(existingItem.id, existingItem.quantity + quantity);
         return;
       }
 
-      // Add new item
+      // Add new item to database
       const { error } = await supabase.from("cart_items").insert({
         cart_id: currentCartId,
         product_id: productId,
@@ -161,7 +188,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error;
 
-      await fetchCartItems();
+      // Reload items from database
+      const loadedItems = await loadCartItems(currentCartId);
+      setItems(loadedItems);
 
       toast({
         title: "Added to cart",
@@ -235,13 +264,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Clear cart
   async function clearCart() {
-    if (!cartId) return;
+    if (!cartIdRef.current) return;
 
     try {
       const { error } = await supabase
         .from("cart_items")
         .delete()
-        .eq("cart_id", cartId);
+        .eq("cart_id", cartIdRef.current);
 
       if (error) throw error;
 

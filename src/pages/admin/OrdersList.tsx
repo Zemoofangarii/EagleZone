@@ -35,7 +35,7 @@ export default function OrdersList() {
       .from("orders")
       .select(`
         *,
-        user_profiles (
+        profiles (
           email,
           full_name
         )
@@ -51,7 +51,7 @@ export default function OrdersList() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>Orders - LUXE Admin</title>
+        <title>Orders - High Mirror Admin</title>
       </Helmet>
 
       <div className="space-y-6">
@@ -110,9 +110,9 @@ export default function OrdersList() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium">{(order as any).user_profiles?.full_name || "Guest"}</p>
+                        <p className="font-medium">{(order as any).profiles?.full_name || "Guest"}</p>
                         <p className="text-sm text-muted-foreground">
-                          {(order as any).user_profiles?.email || "-"}
+                          {(order as any).profiles?.email || "-"}
                         </p>
                       </div>
                     </TableCell>

@@ -47,7 +47,7 @@ export default function OrderConfirmation() {
   return (
     <MainLayout>
       <Helmet>
-        <title>Order Confirmed - LUXE</title>
+        <title>Order Confirmed - High Mirror</title>
         <meta name="description" content="Your order has been placed successfully" />
       </Helmet>
 

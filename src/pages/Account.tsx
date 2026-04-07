@@ -48,7 +48,7 @@ export default function Account() {
     setIsSaving(true);
     try {
       const { error } = await supabase
-        .from("user_profiles")
+        .from("profiles")
         .update({
           full_name: formData.full_name,
           phone: formData.phone,
@@ -88,7 +88,7 @@ export default function Account() {
   return (
     <MainLayout>
       <Helmet>
-        <title>My Account - LUXE</title>
+        <title>My Account - High Mirror</title>
         <meta name="description" content="Manage your account settings and profile" />
       </Helmet>
 

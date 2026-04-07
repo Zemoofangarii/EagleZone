@@ -44,7 +44,7 @@ export async function getCurrentSession() {
 
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
   const { data, error } = await supabase
-    .from("user_profiles")
+    .from("profiles")
     .select("*")
     .eq("id", userId)
     .maybeSingle();
@@ -60,12 +60,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
 export async function getUserRoles(userId: string): Promise<string[]> {
   const { data, error } = await supabase
     .from("user_roles")
-    .select(`
-      role_id,
-      roles:role_id (
-        name
-      )
-    `)
+    .select("role")
     .eq("user_id", userId);
 
   if (error) {
@@ -73,7 +68,7 @@ export async function getUserRoles(userId: string): Promise<string[]> {
     return [];
   }
 
-  return data?.map((ur: any) => ur.roles?.name).filter(Boolean) || [];
+  return data?.map((ur: any) => ur.role).filter(Boolean) || [];
 }
 
 export async function checkIsAdmin(userId: string): Promise<boolean> {

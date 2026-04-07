@@ -86,10 +86,10 @@ export default function CategoryDetail() {
   return (
     <MainLayout>
       <Helmet>
-        <title>{category?.name || "Category"} - LUXE</title>
+        <title>{category?.name || "Category"} - High Mirror</title>
         <meta
           name="description"
-          content={category?.description || `Browse ${category?.name} products at LUXE.`}
+          content={category?.description || `Browse ${category?.name} products at High Mirror.`}
         />
       </Helmet>
 

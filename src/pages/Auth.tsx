@@ -98,8 +98,8 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex bg-background">
       <Helmet>
-        <title>{isLogin ? "Sign In" : "Create Account"} - LUXE</title>
-        <meta name="description" content="Sign in to your LUXE account or create a new one." />
+        <title>{isLogin ? "Sign In" : "Create Account"} - High Mirror</title>
+        <meta name="description" content="Sign in to your High Mirror account or create a new one." />
       </Helmet>
 
       {/* Left Panel - Form */}
@@ -108,7 +108,7 @@ export default function Auth() {
           {/* Logo */}
           <div className="text-center">
             <a href="/" className="inline-block">
-              <span className="font-display text-3xl font-bold gradient-text">LUXE</span>
+              <span className="font-display text-3xl font-bold gradient-text">High Mirror</span>
             </a>
           </div>
 
@@ -120,7 +120,7 @@ export default function Auth() {
             <p className="text-muted-foreground">
               {isLogin
                 ? "Enter your credentials to access your account"
-                : "Start your journey with LUXE today"}
+                : "Start your journey with High Mirror today"}
             </p>
           </div>
 
@@ -201,7 +201,7 @@ export default function Auth() {
             Premium Shopping Experience
           </h2>
           <p className="text-muted-foreground max-w-sm mx-auto">
-            Join thousands of satisfied customers who trust LUXE for their premium product needs.
+            Join thousands of satisfied customers who trust High Mirror for their premium product needs.
           </p>
         </div>
       </div>

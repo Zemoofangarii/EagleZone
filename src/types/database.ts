@@ -8,19 +8,13 @@ export interface UserProfile {
   updated_at?: string;
 }
 
-export interface Role {
-  id: string;
-  name: string;
-  description?: string;
-  created_at?: string;
-}
+export type AppRole = 'admin' | 'manager' | 'customer';
 
 export interface UserRole {
   id: string;
   user_id: string;
-  role_id: string;
+  role: AppRole;
   created_at?: string;
-  role?: Role;
 }
 
 export interface Category {

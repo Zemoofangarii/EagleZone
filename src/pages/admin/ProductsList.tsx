@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -30,11 +30,7 @@ export default function ProductsList() {
   const [search, setSearch] = useState("");
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
+  const fetchProducts = useCallback(async () => {
     const { data, error } = await supabase
       .from("products")
       .select(`
@@ -43,11 +39,22 @@ export default function ProductsList() {
       `)
       .order("created_at", { ascending: false });
 
-    if (!error && data) {
+    if (error) {
+      toast({
+        title: "Error loading products",
+        description: "Unable to fetch products. Please refresh and try again.",
+        variant: "destructive",
+      });
+    } else if (data) {
       setProducts(data as unknown as Product[]);
     }
+
     setLoading(false);
-  }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   async function deleteProduct(id: string) {
     const { error } = await supabase.from("products").delete().eq("id", id);
@@ -68,15 +75,22 @@ export default function ProductsList() {
     fetchProducts();
   }
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(search.toLowerCase()) ||
-    product.slug.toLowerCase().includes(search.toLowerCase())
-  );
+  const normalizedSearch = search.trim().toLowerCase();
+
+  const filteredProducts = products.filter((product) => {
+    const title = product.title ?? "";
+    const slug = product.slug ?? "";
+
+    return (
+      title.toLowerCase().includes(normalizedSearch) ||
+      slug.toLowerCase().includes(normalizedSearch)
+    );
+  });
 
   return (
     <AdminLayout>
       <Helmet>
-        <title>Products - LUXE Admin</title>
+        <title>Products - High Mirror Admin</title>
       </Helmet>
 
       <div className="space-y-6">
@@ -155,7 +169,7 @@ export default function ProductsList() {
                 </TableRow>
               ) : (
                 filteredProducts.map((product) => {
-                  const image = (product as any).product_images?.[0]?.url;
+                  const image = (product as Product & { product_images?: Array<{ url?: string }> }).product_images?.[0]?.url;
                   return (
                     <TableRow key={product.id}>
                       <TableCell>
@@ -175,7 +189,9 @@ export default function ProductsList() {
                           <p className="text-sm text-muted-foreground">/{product.slug}</p>
                         </div>
                       </TableCell>
-                      <TableCell>${product.price.toFixed(2)}</TableCell>
+                      <TableCell>
+                        {typeof product.price === "number" ? `$${product.price.toFixed(2)}` : "—"}
+                      </TableCell>
                       <TableCell>
                         <Badge variant={product.published ? "default" : "secondary"}>
                           {product.published ? "Published" : "Draft"}

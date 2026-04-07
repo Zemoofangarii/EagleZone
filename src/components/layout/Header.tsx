@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
@@ -26,23 +27,41 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl">
+    <motion.header
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+      className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl"
+    >
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-2xl font-bold gradient-text">LUXE</span>
+          <motion.span
+            className="font-display text-2xl font-bold gradient-text"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
+            High Mirror
+          </motion.span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
+          {navLinks.map((link, i) => (
+            <motion.div
               key={link.href}
-              to={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.08, duration: 0.4 }}
             >
-              {link.label}
-            </Link>
+              <Link
+                to={link.href}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                {link.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full" />
+              </Link>
+            </motion.div>
           ))}
         </nav>
 
@@ -57,11 +76,20 @@ export function Header() {
           <Link to="/cart">
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                  {itemCount > 99 ? "99+" : itemCount}
-                </span>
-              )}
+              <AnimatePresence mode="wait">
+                {itemCount > 0 && (
+                  <motion.span
+                    key={itemCount}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                    className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center"
+                  >
+                    {itemCount > 99 ? "99+" : itemCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Button>
           </Link>
 
@@ -112,21 +140,27 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
               <nav className="flex flex-col gap-4 mt-8">
-                {navLinks.map((link) => (
-                  <Link
+                {navLinks.map((link, i) => (
+                  <motion.div
                     key={link.href}
-                    to={link.href}
-                    className="text-lg font-medium py-2 border-b border-border"
-                    onClick={() => setMobileMenuOpen(false)}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1, duration: 0.3 }}
                   >
-                    {link.label}
-                  </Link>
+                    <Link
+                      to={link.href}
+                      className="text-lg font-medium py-2 border-b border-border"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
                 ))}
               </nav>
             </SheetContent>
           </Sheet>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

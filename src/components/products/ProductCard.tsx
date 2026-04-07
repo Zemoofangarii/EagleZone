@@ -3,9 +3,10 @@ import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import type { Product, ProductImage } from "@/types/database";
+import { motion } from "framer-motion";
 
 interface ProductCardProps {
-  product: Product & { 
+  product: Product & {
     product_images?: ProductImage[];
     categories?: { id: string; name: string; slug: string }[];
   };
@@ -13,7 +14,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
-  
+
   function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
@@ -26,33 +27,49 @@ export function ProductCard({ product }: ProductCardProps) {
     : 0;
 
   return (
-    <div className="group relative bg-card rounded-lg overflow-hidden border border-border hover:border-primary/30 transition-all duration-300 hover-lift">
+    <motion.div
+      className="group relative bg-card rounded-lg overflow-hidden border border-border hover:border-primary/30 transition-colors duration-300"
+      whileHover={{ y: -6, boxShadow: "0 12px 40px hsl(0 0% 0% / 0.3)" }}
+      transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
+    >
       {/* Image */}
       <Link to={`/products/${product.slug}`} className="block aspect-square overflow-hidden">
         {primaryImage ? (
-          <img
+          <motion.img
             src={primaryImage}
             alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover"
+            whileHover={{ scale: 1.08 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
           />
         ) : (
           <div className="w-full h-full bg-muted flex items-center justify-center">
             <span className="text-muted-foreground text-sm">No image</span>
           </div>
         )}
-        
+
         {/* Discount Badge */}
         {hasDiscount && (
-          <span className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-xs font-bold px-2 py-1 rounded">
+          <motion.span
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.2 }}
+            className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-xs font-bold px-2 py-1 rounded"
+          >
             -{discountPercent}%
-          </span>
+          </motion.span>
         )}
 
         {/* Featured Badge */}
         {product.featured && (
-          <span className="absolute top-3 right-3 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded">
+          <motion.span
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.3 }}
+            className="absolute top-3 right-3 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded"
+          >
             Featured
-          </span>
+          </motion.span>
         )}
       </Link>
 
@@ -60,7 +77,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="p-4 space-y-2">
         {/* Category Badge */}
         {product.categories && product.categories.length > 0 && (
-          <Link 
+          <Link
             to={`/categories/${product.categories[0].slug}`}
             className="text-xs text-primary hover:underline"
           >
@@ -73,7 +90,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.title}
           </h3>
         </Link>
-        
+
         {product.short_description && (
           <p className="text-sm text-muted-foreground line-clamp-2">
             {product.short_description}
@@ -91,17 +108,22 @@ export function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
           </div>
-          
-          <Button 
-            size="icon" 
-            variant="gold" 
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             className="opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={handleAddToCart}
           >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
+            <Button
+              size="icon"
+              variant="gold"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
