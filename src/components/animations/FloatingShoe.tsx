@@ -59,6 +59,31 @@ function useFloatingShoe(
         },
       });
 
+      if (side === "right") {
+        // Right shoe: starts right, goes left, comes back
+        tl.to(container, { x: rCenterRight, y: maxY * 0.1, rotation: -3, scale: 1.05, duration: 0.1, ease: "sine.inOut" }, 0);
+        tl.to(container, { x: rCenter, y: maxY * 0.2, rotation: 4, scale: 1.1, duration: 0.1, ease: "sine.inOut" }, 0.1);
+        tl.to(container, { x: rCenterLeft, y: maxY * 0.3, rotation: -5, scale: 1.12, duration: 0.1, ease: "sine.inOut" }, 0.2);
+        tl.to(container, { x: rLeft, y: maxY * 0.4, rotation: 6, scale: 1.08, duration: 0.1, ease: "sine.inOut" }, 0.3);
+        tl.to(container, { x: rCenterLeft, y: maxY * 0.5, rotation: -4, scale: 1.15, duration: 0.1, ease: "sine.inOut" }, 0.4);
+        tl.to(container, { x: rCenter, y: maxY * 0.55, rotation: 5, scale: 1.1, duration: 0.1, ease: "sine.inOut" }, 0.5);
+        tl.to(container, { x: rCenterRight, y: maxY * 0.5, rotation: -6, scale: 1.12, duration: 0.1, ease: "sine.inOut" }, 0.6);
+        tl.to(container, { x: rRight, y: maxY * 0.4, rotation: 4, scale: 1.08, duration: 0.1, ease: "sine.inOut" }, 0.7);
+        tl.to(container, { x: rCenterRight, y: maxY * 0.25, rotation: -3, scale: 1.05, duration: 0.1, ease: "sine.inOut" }, 0.8);
+        tl.to(container, { x: rRight, y: 0, rotation: 0, scale: 1, duration: 0.1, ease: "sine.inOut" }, 0.9);
+      } else {
+        // Left shoe: REVERSE — starts left, goes right, comes back
+        tl.to(container, { x: lCenterLeft, y: maxY * 0.1, rotation: 3, scale: 1.05, duration: 0.1, ease: "sine.inOut" }, 0);
+        tl.to(container, { x: lCenter, y: maxY * 0.2, rotation: -4, scale: 1.1, duration: 0.1, ease: "sine.inOut" }, 0.1);
+        tl.to(container, { x: lCenterRight, y: maxY * 0.3, rotation: 5, scale: 1.12, duration: 0.1, ease: "sine.inOut" }, 0.2);
+        tl.to(container, { x: lRight, y: maxY * 0.4, rotation: -6, scale: 1.08, duration: 0.1, ease: "sine.inOut" }, 0.3);
+        tl.to(container, { x: lCenterRight, y: maxY * 0.5, rotation: 4, scale: 1.15, duration: 0.1, ease: "sine.inOut" }, 0.4);
+        tl.to(container, { x: lCenter, y: maxY * 0.55, rotation: -5, scale: 1.1, duration: 0.1, ease: "sine.inOut" }, 0.5);
+        tl.to(container, { x: lCenterLeft, y: maxY * 0.5, rotation: 6, scale: 1.12, duration: 0.1, ease: "sine.inOut" }, 0.6);
+        tl.to(container, { x: lLeft, y: maxY * 0.4, rotation: -4, scale: 1.08, duration: 0.1, ease: "sine.inOut" }, 0.7);
+        tl.to(container, { x: lCenterLeft, y: maxY * 0.25, rotation: 3, scale: 1.05, duration: 0.1, ease: "sine.inOut" }, 0.8);
+        tl.to(container, { x: lLeft, y: 0, rotation: 0, scale: 1, duration: 0.1, ease: "sine.inOut" }, 0.9);
+      }
 
       const st = tl.scrollTrigger;
       return () => {
