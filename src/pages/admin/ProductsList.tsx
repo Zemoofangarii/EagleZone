@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Product } from "@/types/database";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 
 export default function ProductsList() {
@@ -29,6 +30,7 @@ export default function ProductsList() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const fetchProducts = useCallback(async () => {
     const { data, error } = await supabase
@@ -41,8 +43,8 @@ export default function ProductsList() {
 
     if (error) {
       toast({
-        title: "Error loading products",
-        description: "Unable to fetch products. Please refresh and try again.",
+        title: t("admin.errorLoadingProducts"),
+        description: t("admin.unableToFetchProducts"),
         variant: "destructive",
       });
     } else if (data) {
@@ -61,16 +63,16 @@ export default function ProductsList() {
 
     if (error) {
       toast({
-        title: "Error",
-        description: "Failed to delete product.",
+        title: t("common.error"),
+        description: t("admin.failedDeleteProduct"),
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "Product deleted",
-      description: "The product has been removed.",
+      title: t("admin.productDeleted"),
+      description: t("admin.productDeletedDesc"),
     });
     fetchProducts();
   }

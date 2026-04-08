@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import type { Order, OrderItem } from "@/types/database";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet-async";
@@ -51,6 +52,7 @@ export default function OrdersList() {
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [loadingItems, setLoadingItems] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   async function viewOrderDetails(order: Order) {
     setSelectedOrder(order);
@@ -93,16 +95,16 @@ export default function OrdersList() {
 
     if (error) {
       toast({
-        title: "Error",
-        description: "Failed to update order status.",
+        title: t("common.error"),
+        description: t("admin.failedUpdateOrderStatus"),
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "Status updated",
-      description: `Order status changed to ${status}.`,
+      title: t("admin.statusUpdated"),
+      description: t("admin.orderStatusChanged", { status }),
     });
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status } : o))

@@ -14,6 +14,7 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, Loader2, Save, X } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
@@ -49,6 +50,7 @@ export default function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(!!id);
   const [images, setImages] = useState<ProductImage[]>([]);
@@ -111,8 +113,8 @@ export default function ProductForm() {
 
     if (error || !data) {
       toast({
-        title: "Error",
-        description: "Product not found.",
+        title: t("common.error"),
+        description: t("admin.productNotFound"),
         variant: "destructive",
       });
       navigate("/admin/products");
@@ -182,8 +184,8 @@ export default function ProductForm() {
   async function onSubmit(data: ProductFormData) {
     if (selectedCategories.length === 0) {
       toast({
-        title: "Error",
-        description: "Please select at least one category.",
+        title: t("common.error"),
+        description: t("admin.selectCategory"),
         variant: "destructive",
       });
       return;
@@ -225,7 +227,7 @@ export default function ProductForm() {
 
     if (error) {
       toast({
-        title: "Error",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -284,8 +286,8 @@ export default function ProductForm() {
     setLoading(false);
 
     toast({
-      title: isEditing ? "Product updated" : "Product created",
-      description: `"${data.title}" has been ${isEditing ? "updated" : "created"}.`,
+      title: isEditing ? t("admin.productUpdated") : t("admin.productCreated"),
+      description: isEditing ? t("admin.productUpdatedDesc", { title: data.title }) : t("admin.productCreatedDesc", { title: data.title }),
     });
     navigate("/admin/products");
   }

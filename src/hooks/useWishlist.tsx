@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +32,7 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -93,8 +95,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   async function toggleWishlist(productId: string) {
     if (!user) {
       toast({
-        title: "Sign in required",
-        description: "Please sign in to add items to your wishlist.",
+        title: t("wishlist.signInRequired"),
+        description: t("wishlist.signInRequiredDesc"),
         variant: "destructive",
       });
       return;
@@ -115,22 +117,22 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         setItems(prev);
-        toast({ title: "Error", description: "Could not update wishlist.", variant: "destructive" });
+        toast({ title: t("common.error"), description: t("wishlist.errorUpdate"), variant: "destructive" });
         return;
       }
 
-      toast({ title: "Removed from wishlist", description: "Item removed from your wishlist." });
+      toast({ title: t("wishlist.removed"), description: t("wishlist.removedDesc") });
     } else {
       const { error } = await supabase
         .from("wishlists")
         .insert({ user_id: user.id, product_id: productId });
 
       if (error) {
-        toast({ title: "Error", description: "Could not update wishlist.", variant: "destructive" });
+        toast({ title: t("common.error"), description: t("wishlist.errorUpdate"), variant: "destructive" });
         return;
       }
 
-      toast({ title: "Added to wishlist", description: "Item added to your wishlist." });
+      toast({ title: t("wishlist.added"), description: t("wishlist.addedDesc") });
       await fetchWishlist();
     }
   }

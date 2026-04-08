@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,12 +27,13 @@ export function ImageUpload({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   async function uploadFile(file: File) {
     if (!file.type.startsWith("image/")) {
       toast({
-        title: "Invalid file type",
-        description: "Please upload an image file.",
+        title: t("admin.invalidFileType"),
+        description: t("admin.uploadImageOnly"),
         variant: "destructive",
       });
       return;
@@ -39,8 +41,8 @@ export function ImageUpload({
 
     if (file.size > 5 * 1024 * 1024) {
       toast({
-        title: "File too large",
-        description: "Maximum file size is 5MB.",
+        title: t("admin.fileTooLarge"),
+        description: t("admin.maxFileSize"),
         variant: "destructive",
       });
       return;
@@ -57,7 +59,7 @@ export function ImageUpload({
 
     if (uploadError) {
       toast({
-        title: "Upload failed",
+        title: t("admin.uploadFailed"),
         description: uploadError.message,
         variant: "destructive",
       });
@@ -71,8 +73,8 @@ export function ImageUpload({
     setUploading(false);
 
     toast({
-      title: "Image uploaded",
-      description: "Your image has been uploaded successfully.",
+      title: t("admin.imageUploaded"),
+      description: t("admin.imageUploadedDesc"),
     });
   }
 

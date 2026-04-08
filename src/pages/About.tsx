@@ -5,15 +5,15 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { FadeUp, FadeInView, staggerContainer, staggerItem } from "@/components/animations/MotionWrappers";
 import { Award, Gem, Heart, ShieldCheck, Truck, Users } from "lucide-react";
 
-const timeline = [
-  { year: "2023", title: "The Beginning", description: "Eagle Zone was born from a passion for premium products and exceptional customer experiences." },
-  { year: "2023", title: "First 1,000 Customers", description: "Reached our first milestone, proving that quality and trust resonate with shoppers everywhere." },
-  { year: "2024", title: "Global Expansion", description: "Expanded our reach to serve customers across 30+ countries with localized shipping." },
-  { year: "2025", title: "10K+ Community", description: "Grew our community to over 10,000 loyal customers and 500+ premium products." },
-];
-
 export default function About() {
   const { t } = useTranslation();
+
+  const timeline = [
+    { year: "2023", title: t("about.timeline1Title"), description: t("about.timeline1Desc") },
+    { year: "2023", title: t("about.timeline2Title"), description: t("about.timeline2Desc") },
+    { year: "2024", title: t("about.timeline3Title"), description: t("about.timeline3Desc") },
+    { year: "2025", title: t("about.timeline4Title"), description: t("about.timeline4Desc") },
+  ];
 
   const stats = [
     { value: "10K+", label: t("about.happyCustomers") },

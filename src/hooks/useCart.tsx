@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User } from "@supabase/supabase-js";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -96,6 +97,7 @@ async function loadCartItems(cartId: string): Promise<CartItemWithProduct[]> {
 export function CartProvider({ children }: { children: ReactNode }) {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [items, setItems] = useState<CartItemWithProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const cartIdRef = useRef<string | null>(null);
@@ -160,8 +162,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const currentCartId = await getCartId();
     if (!currentCartId) {
       toast({
-        title: "Error",
-        description: "Could not add item to cart. Please try again.",
+        title: t("common.error"),
+        description: t("cart.errorAddItem"),
         variant: "destructive",
       });
       return;
@@ -193,14 +195,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems(loadedItems);
 
       toast({
-        title: "Added to cart",
-        description: "Item has been added to your cart.",
+        title: t("cart.addedToCart"),
+        description: t("cart.addedToCartDesc"),
       });
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast({
-        title: "Error",
-        description: "Could not add item to cart. Please try again.",
+        title: t("common.error"),
+        description: t("cart.errorAddItem"),
         variant: "destructive",
       });
     }
@@ -229,8 +231,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Error updating quantity:", error);
       toast({
-        title: "Error",
-        description: "Could not update quantity. Please try again.",
+        title: t("common.error"),
+        description: t("cart.errorUpdateQuantity"),
         variant: "destructive",
       });
     }
@@ -249,14 +251,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems((prev) => prev.filter((item) => item.id !== itemId));
 
       toast({
-        title: "Removed",
-        description: "Item has been removed from your cart.",
+        title: t("cart.itemRemoved"),
+        description: t("cart.itemRemovedDesc"),
       });
     } catch (error) {
       console.error("Error removing item:", error);
       toast({
-        title: "Error",
-        description: "Could not remove item. Please try again.",
+        title: t("common.error"),
+        description: t("cart.errorRemoveItem"),
         variant: "destructive",
       });
     }

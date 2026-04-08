@@ -29,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { UserProfile, AppRole } from "@/types/database";
 import { Search, MoreHorizontal, Shield, Mail, Phone, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -52,6 +53,7 @@ export default function UsersList() {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState<AppRole[]>([]);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchUsers();
@@ -87,8 +89,8 @@ export default function UsersList() {
 
     if (deleteError) {
       toast({
-        title: "Error",
-        description: "Failed to update user roles.",
+        title: t("common.error"),
+        description: t("admin.failedUpdateRoles"),
         variant: "destructive",
       });
       return;
@@ -107,8 +109,8 @@ export default function UsersList() {
 
       if (insertError) {
         toast({
-          title: "Error",
-          description: "Failed to update user roles.",
+          title: t("common.error"),
+          description: t("admin.failedUpdateRoles"),
           variant: "destructive",
         });
         return;
@@ -116,8 +118,8 @@ export default function UsersList() {
     }
 
     toast({
-      title: "Roles updated",
-      description: "User roles have been updated successfully.",
+      title: t("admin.rolesUpdated"),
+      description: t("admin.rolesUpdatedDesc"),
     });
 
     setIsRoleDialogOpen(false);

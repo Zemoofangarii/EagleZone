@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Category } from "@/types/database";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 
 export default function CategoriesList() {
@@ -28,6 +29,7 @@ export default function CategoriesList() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchCategories();
@@ -50,16 +52,16 @@ export default function CategoriesList() {
     
     if (error) {
       toast({
-        title: "Error",
-        description: "Failed to delete category.",
+        title: t("common.error"),
+        description: t("admin.failedDeleteCategory"),
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "Category deleted",
-      description: "The category has been removed.",
+      title: t("admin.categoryDeleted"),
+      description: t("admin.categoryDeletedDesc"),
     });
     fetchCategories();
   }

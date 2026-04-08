@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
@@ -28,6 +29,7 @@ export default function CategoryForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(!!id);
   const isEditing = !!id;
@@ -70,8 +72,8 @@ export default function CategoryForm() {
 
     if (error || !data) {
       toast({
-        title: "Error",
-        description: "Category not found.",
+        title: t("common.error"),
+        description: t("admin.categoryNotFound"),
         variant: "destructive",
       });
       navigate("/admin/categories");
@@ -117,7 +119,7 @@ export default function CategoryForm() {
 
     if (error) {
       toast({
-        title: "Error",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -125,8 +127,8 @@ export default function CategoryForm() {
     }
 
     toast({
-      title: isEditing ? "Category updated" : "Category created",
-      description: `"${data.name}" has been ${isEditing ? "updated" : "created"}.`,
+      title: isEditing ? t("admin.categoryUpdated") : t("admin.categoryCreated"),
+      description: isEditing ? t("admin.categoryUpdatedDesc", { name: data.name }) : t("admin.categoryCreatedDesc", { name: data.name }),
     });
     navigate("/admin/categories");
   }
