@@ -147,7 +147,7 @@ export default function ProductDetail() {
             offers: {
               "@type": "Offer",
               price: product.price,
-              priceCurrency: product.currency || "USD",
+              priceCurrency: product.currency || "EGP",
               availability: "https://schema.org/InStock",
             },
           })}
@@ -248,12 +248,12 @@ export default function ProductDetail() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.4 }}
                 >
-                  ${product.price.toFixed(2)}
+                  {t("common.currency")}{product.price.toFixed(2)}
                 </motion.span>
                 {hasDiscount && (
                   <>
                     <span className="text-xl text-muted-foreground line-through">
-                      ${product.compare_at_price!.toFixed(2)}
+                      {t("common.currency")}{product.compare_at_price!.toFixed(2)}
                     </span>
                     <motion.span
                       initial={{ scale: 0, opacity: 0 }}
@@ -261,7 +261,7 @@ export default function ProductDetail() {
                       transition={{ type: "spring", stiffness: 400, damping: 12, delay: 0.5 }}
                       className="bg-destructive text-destructive-foreground text-sm font-bold px-2 py-1 rounded"
                     >
-                      Save ${(product.compare_at_price! - product.price).toFixed(2)}
+                      Save {t("common.currency")}{(product.compare_at_price! - product.price).toFixed(2)}
                     </motion.span>
                   </>
                 )}

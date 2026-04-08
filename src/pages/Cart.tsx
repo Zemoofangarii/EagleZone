@@ -107,7 +107,7 @@ export default function Cart() {
                         {item.product.title}
                       </Link>
                       <p className="text-lg font-bold mt-1">
-                        ${item.product.price.toFixed(2)}
+                        {t("common.currency")}{item.product.price.toFixed(2)}
                       </p>
 
                       {/* Quantity Controls */}
@@ -147,7 +147,7 @@ export default function Cart() {
                     {/* Line Total */}
                     <div className="text-right">
                       <p className="font-bold">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        {t("common.currency")}{(item.product.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -163,7 +163,7 @@ export default function Cart() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t("cart.subtotal")}</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">{t("common.currency")}{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t("cart.shipping")}</span>
@@ -174,7 +174,7 @@ export default function Cart() {
                 <div className="border-t border-border pt-4">
                   <div className="flex justify-between text-lg font-bold">
                     <span>{t("cart.total")}</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>{t("common.currency")}{subtotal.toFixed(2)}</span>
                   </div>
                 </div>
 

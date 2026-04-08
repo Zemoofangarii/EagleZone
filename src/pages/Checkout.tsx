@@ -300,7 +300,7 @@ export default function Checkout() {
                         {item.product.title} × {item.quantity}
                       </span>
                       <span className="font-medium">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        {t("common.currency")}{(item.product.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   ))}
@@ -309,7 +309,7 @@ export default function Checkout() {
                 <div className="border-t border-border pt-4 space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t("checkout.subtotal")}</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">{t("common.currency")}{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t("checkout.shipping")}</span>
@@ -317,14 +317,14 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t("checkout.tax")}</span>
-                    <span className="font-medium">${tax.toFixed(2)}</span>
+                    <span className="font-medium">{t("common.currency")}{tax.toFixed(2)}</span>
                   </div>
                 </div>
 
                 <div className="border-t border-border pt-4">
                   <div className="flex justify-between text-lg font-bold">
                     <span>{t("checkout.total")}</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>{t("common.currency")}{total.toFixed(2)}</span>
                   </div>
                 </div>
 

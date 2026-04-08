@@ -192,7 +192,7 @@ export default function ProductsList() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {typeof product.price === "number" ? `$${product.price.toFixed(2)}` : "—"}
+                        {typeof product.price === "number" ? `${t("common.currency")}${product.price.toFixed(2)}` : "—"}
                       </TableCell>
                       <TableCell>
                         <Badge variant={product.published ? "default" : "secondary"}>

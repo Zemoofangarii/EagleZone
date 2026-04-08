@@ -189,7 +189,7 @@ export default function OrdersList() {
                       </Badge>
                     </TableCell>
                     <TableCell className="font-medium">
-                      ${order.total.toFixed(2)}
+                      {t("common.currency")}{order.total.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {order.created_at && format(new Date(order.created_at), "MMM d, yyyy")}
@@ -307,8 +307,8 @@ export default function OrdersList() {
                               {item.sku && <p className="text-xs text-muted-foreground">SKU: {item.sku}</p>}
                             </TableCell>
                             <TableCell className="text-right">{item.quantity}</TableCell>
-                            <TableCell className="text-right">${item.unit_price.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${item.total.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">{t("common.currency")}{item.unit_price.toFixed(2)}</TableCell>
+                            <TableCell className="text-right">{t("common.currency")}{item.total.toFixed(2)}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -320,25 +320,25 @@ export default function OrdersList() {
                 <div className="border-t pt-4 space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${selectedOrder.subtotal.toFixed(2)}</span>
+                    <span>{t("common.currency")}{selectedOrder.subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>${selectedOrder.shipping.toFixed(2)}</span>
+                    <span>{t("common.currency")}{selectedOrder.shipping.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tax</span>
-                    <span>${selectedOrder.tax.toFixed(2)}</span>
+                    <span>{t("common.currency")}{selectedOrder.tax.toFixed(2)}</span>
                   </div>
                   {selectedOrder.discount > 0 && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Discount</span>
-                      <span className="text-green-500">-${selectedOrder.discount.toFixed(2)}</span>
+                      <span className="text-green-500">-{t("common.currency")}{selectedOrder.discount.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-semibold text-base pt-2 border-t">
                     <span>Total</span>
-                    <span>${selectedOrder.total.toFixed(2)}</span>
+                    <span>{t("common.currency")}{selectedOrder.total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

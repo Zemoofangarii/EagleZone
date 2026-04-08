@@ -5,6 +5,7 @@ import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import type { Product, ProductImage } from "@/types/database";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface ProductCardProps {
   product: Product & {
@@ -14,6 +15,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { t } = useTranslation();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
@@ -127,11 +129,11 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="flex items-center justify-between pt-2">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-foreground">
-              ${product.price.toFixed(2)}
+              {t("common.currency")} {product.price.toFixed(2)}
             </span>
             {hasDiscount && (
               <span className="text-sm text-muted-foreground line-through">
-                ${product.compare_at_price!.toFixed(2)}
+                {t("common.currency")} {product.compare_at_price!.toFixed(2)}
               </span>
             )}
           </div>

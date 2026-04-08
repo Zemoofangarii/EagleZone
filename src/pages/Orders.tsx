@@ -143,7 +143,7 @@ export default function Orders() {
                       >
                         {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                       </Badge>
-                      <span className="font-bold">${Number(order.total).toFixed(2)}</span>
+                      <span className="font-bold">{t("common.currency")}{Number(order.total).toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -155,7 +155,7 @@ export default function Orders() {
                           <span className="text-muted-foreground">
                             {item.title} × {item.quantity}
                           </span>
-                          <span>${(item.unit_price * item.quantity).toFixed(2)}</span>
+                          <span>{t("common.currency")}{(item.unit_price * item.quantity).toFixed(2)}</span>
                         </div>
                       ))}
                       {order.order_items.length > 3 && (

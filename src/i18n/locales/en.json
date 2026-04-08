@@ -1,6 +1,7 @@
 {
   "common": {
     "brandName": "Eagle Zone",
+    "currency": "EGP",
     "shopNow": "Shop Now",
     "continueShopping": "Continue Shopping",
     "browseProducts": "Browse Products",

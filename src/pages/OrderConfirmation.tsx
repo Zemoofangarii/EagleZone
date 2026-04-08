@@ -139,10 +139,10 @@ export default function OrderConfirmation() {
                           <p className="font-medium line-clamp-1">{item.title}</p>
                         )}
                         <p className="text-sm text-muted-foreground">
-                          Qty: {item.quantity} × ${item.unit_price.toFixed(2)}
+                          Qty: {item.quantity} × {t("common.currency")}{item.unit_price.toFixed(2)}
                         </p>
                       </div>
-                      <p className="font-medium shrink-0">${item.total.toFixed(2)}</p>
+                      <p className="font-medium shrink-0">{t("common.currency")}{item.total.toFixed(2)}</p>
                     </div>
                   );
                 })}
@@ -156,7 +156,7 @@ export default function OrderConfirmation() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t("cart.subtotal")}</span>
-                  <span>${Number(order.subtotal).toFixed(2)}</span>
+                  <span>{t("common.currency")}{Number(order.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t("cart.shipping")}</span>
@@ -164,11 +164,11 @@ export default function OrderConfirmation() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t("checkout.tax")}</span>
-                  <span>${Number(order.tax).toFixed(2)}</span>
+                  <span>{t("common.currency")}{Number(order.tax).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold pt-2 border-t border-border">
                   <span>{t("cart.total")}</span>
-                  <span>${Number(order.total).toFixed(2)}</span>
+                  <span>{t("common.currency")}{Number(order.total).toFixed(2)}</span>
                 </div>
               </div>
             </div>

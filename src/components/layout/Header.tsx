@@ -271,7 +271,7 @@ export function Header() {
                             )}
                           </div>
                           <span className="shrink-0 font-semibold text-sm">
-                            ${product.price.toFixed(2)}
+                            {t("common.currency")}{product.price.toFixed(2)}
                           </span>
                         </motion.button>
                       ))}
@@ -385,11 +385,11 @@ export function Header() {
                           </SheetClose>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="font-semibold text-sm">
-                              ${item.product.price.toFixed(2)}
+                              {t("common.currency")}{item.product.price.toFixed(2)}
                             </span>
                             {item.product.compare_at_price && item.product.compare_at_price > item.product.price && (
                               <span className="text-xs text-muted-foreground line-through">
-                                ${item.product.compare_at_price.toFixed(2)}
+                                {t("common.currency")}{item.product.compare_at_price.toFixed(2)}
                               </span>
                             )}
                           </div>
