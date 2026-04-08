@@ -71,7 +71,12 @@
     "addProducts": "إضافة منتجات",
     "newsletter": "انضم لنشرتنا البريدية",
     "newsletterDesc": "اشترك للحصول على عروض خاصة وهدايا مجانية وصفقات حصرية.",
-    "emailPlaceholder": "أدخل بريدك الإلكتروني"
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "latestProducts": "أحدث المنتجات",
+    "latestProductsSubtitle": "وصلات جديدة خصيصاً لك",
+    "shopByCategory": "تسوق حسب الفئة",
+    "shopByCategorySubtitle": "تصفح مجموعاتنا المختارة",
+    "productsCount": "{{count}} منتج"
   },
   "products": {
     "metaTitle": "المنتجات - إيجل زون",

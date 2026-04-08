@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Truck, Shield, RotateCcw } from "lucide-react";
+import { ArrowRight, Sparkles, Truck, Shield, RotateCcw, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProductGrid } from "@/components/products/ProductGrid";
+import { ProductCard } from "@/components/products/ProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import type { Product } from "@/types/database";
 import { Helmet } from "react-helmet-async";
@@ -11,11 +12,31 @@ import { motion } from "framer-motion";
 import { FadeUp, FadeInView, staggerContainer, staggerItem } from "@/components/animations/MotionWrappers";
 import { useParallax, useScrollReveal } from "@/hooks/useScrollAnimation";
 import { useTranslation } from "react-i18next";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+
+interface CategoryWithCount {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image_url: string | null;
+  product_count: number;
+}
 
 export default function Index() {
   const { t } = useTranslation();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<CategoryWithCount[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const parallaxRef = useParallax(0.3);
   const featuresRef = useScrollReveal({ y: 40, stagger: 0.12 });
   const ctaRef = useScrollReveal({ y: 50, duration: 0.8 });
@@ -45,6 +66,47 @@ export default function Index() {
     }
 
     fetchFeaturedProducts();
+
+    async function fetchAllProducts() {
+      const { data, error } = await supabase
+        .from("products")
+        .select(`*, product_images (*)`)
+        .eq("published", true)
+        .order("created_at", { ascending: false })
+        .limit(12);
+
+      if (!error && data) {
+        setAllProducts(data as unknown as Product[]);
+      }
+    }
+
+    async function fetchCategories() {
+      const { data: categoriesData, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+
+      if (error) {
+        setCategoriesLoading(false);
+        return;
+      }
+
+      const categoriesWithCounts = await Promise.all(
+        (categoriesData || []).map(async (cat) => {
+          const { count } = await supabase
+            .from("product_categories")
+            .select("*", { count: "exact", head: true })
+            .eq("category_id", cat.id);
+          return { ...cat, product_count: count || 0 };
+        })
+      );
+
+      setCategories(categoriesWithCounts);
+      setCategoriesLoading(false);
+    }
+
+    fetchAllProducts();
+    fetchCategories();
   }, []);
 
   return (
@@ -172,6 +234,138 @@ export default function Index() {
                 </Link>
               </div>
             </FadeInView>
+          )}
+        </div>
+      </section>
+
+      {/* Products Carousel */}
+      <section className="py-16 md:py-24 bg-card/30">
+        <div className="container">
+          <FadeInView direction="up">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="font-display text-3xl md:text-4xl font-bold">{t("home.latestProducts")}</h2>
+                <p className="text-muted-foreground mt-2">{t("home.latestProductsSubtitle")}</p>
+              </div>
+              <Link to="/products">
+                <Button variant="ghost">
+                  {t("common.viewAll")}
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          </FadeInView>
+
+          {allProducts.length > 0 ? (
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[
+                Autoplay({ delay: 3000, stopOnInteraction: false }),
+              ]}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {allProducts.map((product) => (
+                  <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                    <ProductCard product={product} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex -left-4 lg:-left-5" />
+              <CarouselNext className="hidden md:flex -right-4 lg:-right-5" />
+            </Carousel>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-card rounded-lg overflow-hidden border border-border animate-pulse">
+                  <div className="aspect-square bg-muted" />
+                  <div className="p-4 space-y-3">
+                    <div className="h-4 bg-muted rounded w-3/4" />
+                    <div className="h-3 bg-muted rounded w-full" />
+                    <div className="h-6 bg-muted rounded w-1/4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="py-16 md:py-24">
+        <div className="container">
+          <FadeInView direction="up">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="font-display text-3xl md:text-4xl font-bold">{t("home.shopByCategory")}</h2>
+                <p className="text-muted-foreground mt-2">{t("home.shopByCategorySubtitle")}</p>
+              </div>
+              <Link to="/categories">
+                <Button variant="ghost">
+                  {t("common.viewAll")}
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          </FadeInView>
+
+          {categoriesLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-card rounded-lg overflow-hidden border border-border animate-pulse">
+                  <div className="aspect-[4/3] bg-muted" />
+                  <div className="p-4 space-y-2">
+                    <div className="h-5 bg-muted rounded w-1/2" />
+                    <div className="h-4 bg-muted rounded w-1/3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : categories.length > 0 ? (
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-50px" }}
+            >
+              {categories.map((category) => (
+                <motion.div key={category.id} variants={staggerItem}>
+                  <Link
+                    to={`/categories/${category.slug}`}
+                    className="group block bg-card rounded-lg overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg"
+                  >
+                    <div className="aspect-[4/3] overflow-hidden bg-muted relative">
+                      {category.image_url ? (
+                        <img
+                          src={category.image_url}
+                          alt={category.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ShoppingBag className="h-12 w-12 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 className="font-display text-lg font-bold text-white">{category.name}</h3>
+                        <p className="text-sm text-white/80">
+                          {t("home.productsCount", { count: category.product_count })}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <div className="text-center py-16 bg-card/50 rounded-lg border border-border">
+              <p className="text-muted-foreground">{t("home.noFeatured")}</p>
+            </div>
           )}
         </div>
       </section>

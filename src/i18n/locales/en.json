@@ -71,7 +71,12 @@
     "addProducts": "Add Products",
     "newsletter": "Join Our Newsletter",
     "newsletterDesc": "Subscribe to get special offers, free giveaways, and exclusive deals.",
-    "emailPlaceholder": "Enter your email"
+    "emailPlaceholder": "Enter your email",
+    "latestProducts": "Latest Products",
+    "latestProductsSubtitle": "Fresh arrivals just for you",
+    "shopByCategory": "Shop by Category",
+    "shopByCategorySubtitle": "Browse our curated collections",
+    "productsCount": "{{count}} products"
   },
   "products": {
     "metaTitle": "Products - Eagle Zone",
