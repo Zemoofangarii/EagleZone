@@ -10,20 +10,20 @@ INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true)
 -- Pro functions matching current schema (user_roles.role contains the role name)
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public
-AS $$ 
+AS $$
   SELECT EXISTS (
-    SELECT 1 FROM public.user_roles ur 
+    SELECT 1 FROM public.user_roles ur
     WHERE ur.user_id = auth.uid() AND ur.role = 'admin'
-  ); 
+  );
 $$;
 
 CREATE OR REPLACE FUNCTION public.is_staff()
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public
-AS $$ 
+AS $$
   SELECT EXISTS (
-    SELECT 1 FROM public.user_roles ur 
+    SELECT 1 FROM public.user_roles ur
     WHERE ur.user_id = auth.uid() AND ur.role IN ('admin', 'manager')
-  ); 
+  );
 $$;
 
 -- Drop all storage policies and recreate pro ones

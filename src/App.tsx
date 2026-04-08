@@ -25,6 +25,7 @@ import CategoriesList from "./pages/admin/CategoriesList";
 import CategoryForm from "./pages/admin/CategoryForm";
 import OrdersList from "./pages/admin/OrdersList";
 import UsersList from "./pages/admin/UsersList";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
                   <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/orders" element={<Orders />} />
+                  <Route path="/about" element={<About />} />
                   
                   {/* Admin Routes */}
                   <Route path="/admin" element={<AdminDashboard />} />

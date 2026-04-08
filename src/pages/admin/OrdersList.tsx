@@ -9,7 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import type { Order } from "@/types/database";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet-async";
@@ -22,9 +30,12 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-red-500/20 text-red-500",
 };
 
+const ORDER_STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled"];
+
 export default function OrdersList() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchOrders();
@@ -46,6 +57,30 @@ export default function OrdersList() {
       setOrders(data as unknown as Order[]);
     }
     setLoading(false);
+  }
+
+  async function updateOrderStatus(orderId: string, status: string) {
+    const { error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("id", orderId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update order status.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Status updated",
+      description: `Order status changed to ${status}.`,
+    });
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, status } : o))
+    );
   }
 
   return (
@@ -73,6 +108,7 @@ export default function OrdersList() {
                 <TableHead>Status</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Date</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -94,11 +130,14 @@ export default function OrdersList() {
                     <TableCell>
                       <div className="h-4 bg-muted rounded w-24 animate-pulse" />
                     </TableCell>
+                    <TableCell>
+                      <div className="h-4 bg-muted rounded w-28 animate-pulse" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : orders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={6} className="text-center py-8">
                     <p className="text-muted-foreground">No orders yet.</p>
                   </TableCell>
                 </TableRow>
@@ -126,6 +165,23 @@ export default function OrdersList() {
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {order.created_at && format(new Date(order.created_at), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={order.status}
+                        onValueChange={(value) => updateOrderStatus(order.id, value)}
+                      >
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ORDER_STATUSES.map((s) => (
+                            <SelectItem key={s} value={s}>
+                              {s.charAt(0).toUpperCase() + s.slice(1)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                   </TableRow>
                 ))
