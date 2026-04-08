@@ -45,7 +45,9 @@ export interface Product {
   created_at?: string;
   updated_at?: string;
   images?: ProductImage[];
+  product_images?: ProductImage[];
   variants?: ProductVariant[];
+  product_variants?: ProductVariant[];
   categories?: Category[];
 }
 

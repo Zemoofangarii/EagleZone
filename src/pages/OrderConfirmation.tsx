@@ -7,23 +7,42 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { Order } from "@/types/database";
 
+interface OrderItemWithProduct {
+  id: string;
+  title: string;
+  quantity: number;
+  unit_price: number;
+  total: number;
+  product_id?: string;
+  products?: {
+    slug: string;
+    product_images: { url: string; alt_text?: string }[];
+  } | null;
+}
+
 export default function OrderConfirmation() {
   const { id } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
+  const [orderItems, setOrderItems] = useState<OrderItemWithProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchOrder() {
       if (!id) return;
 
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const [orderRes, itemsRes] = await Promise.all([
+        supabase.from("orders").select("*").eq("id", id).single(),
+        supabase
+          .from("order_items")
+          .select(`*, products (slug, product_images (url, alt_text))`)
+          .eq("order_id", id),
+      ]);
 
-      if (!error && data) {
-        setOrder(data as unknown as Order);
+      if (!orderRes.error && orderRes.data) {
+        setOrder(orderRes.data as unknown as Order);
+      }
+      if (!itemsRes.error && itemsRes.data) {
+        setOrderItems(itemsRes.data as unknown as OrderItemWithProduct[]);
       }
       setLoading(false);
     }
@@ -78,6 +97,56 @@ export default function OrderConfirmation() {
               <li>• Track your order in your account dashboard.</li>
             </ul>
           </div>
+
+          {orderItems.length > 0 && (
+            <div className="bg-card rounded-lg border border-border p-6 mb-8 text-left">
+              <h3 className="font-semibold mb-4">Order Items</h3>
+              <div className="divide-y divide-border">
+                {orderItems.map((item) => {
+                  const image = item.products?.product_images?.[0];
+                  const slug = item.products?.slug;
+                  return (
+                    <div key={item.id} className="flex items-center gap-4 py-3 first:pt-0 last:pb-0">
+                      {slug ? (
+                        <Link to={`/products/${slug}`} className="shrink-0">
+                          <div className="w-16 h-16 rounded-md overflow-hidden bg-muted border border-border">
+                            {image ? (
+                              <img
+                                src={image.url}
+                                alt={image.alt_text || item.title}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Package className="h-6 w-6 text-muted-foreground" />
+                              </div>
+                            )}
+                          </div>
+                        </Link>
+                      ) : (
+                        <div className="w-16 h-16 rounded-md overflow-hidden bg-muted border border-border flex items-center justify-center shrink-0">
+                          <Package className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        {slug ? (
+                          <Link to={`/products/${slug}`} className="font-medium hover:text-primary transition-colors line-clamp-1">
+                            {item.title}
+                          </Link>
+                        ) : (
+                          <p className="font-medium line-clamp-1">{item.title}</p>
+                        )}
+                        <p className="text-sm text-muted-foreground">
+                          Qty: {item.quantity} × ${item.unit_price.toFixed(2)}
+                        </p>
+                      </div>
+                      <p className="font-medium shrink-0">${item.total.toFixed(2)}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {order && (
             <div className="bg-card rounded-lg border border-border p-6 mb-8">

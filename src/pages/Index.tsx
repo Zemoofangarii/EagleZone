@@ -10,31 +10,21 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { FadeUp, FadeInView, staggerContainer, staggerItem } from "@/components/animations/MotionWrappers";
 import { useParallax, useScrollReveal } from "@/hooks/useScrollAnimation";
-
-const features = [
-  {
-    icon: Truck,
-    title: "Free Shipping",
-    description: "On orders over $100",
-  },
-  {
-    icon: Shield,
-    title: "Secure Payment",
-    description: "100% protected transactions",
-  },
-  {
-    icon: RotateCcw,
-    title: "Easy Returns",
-    description: "30-day return policy",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Index() {
+  const { t } = useTranslation();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const parallaxRef = useParallax(0.3);
   const featuresRef = useScrollReveal({ y: 40, stagger: 0.12 });
   const ctaRef = useScrollReveal({ y: 50, duration: 0.8 });
+
+  const features = [
+    { icon: Truck, title: t("home.freeShipping"), description: t("home.freeShippingDesc") },
+    { icon: Shield, title: t("home.securePayment"), description: t("home.securePaymentDesc") },
+    { icon: RotateCcw, title: t("home.easyReturns"), description: t("home.easyReturnsDesc") },
+  ];
 
   useEffect(() => {
     async function fetchFeaturedProducts() {
@@ -60,15 +50,15 @@ export default function Index() {
   return (
     <MainLayout>
       <Helmet>
-        <title>High Mirror - Premium E-Commerce Store</title>
+        <title>{t("home.metaTitle")}</title>
         <meta
           name="description"
-          content="Discover premium products curated for the discerning customer. Free shipping on orders over $100."
+          content={t("home.heroSubtitle")}
         />
-        <meta property="og:title" content="High Mirror - Premium E-Commerce Store" />
+        <meta property="og:title" content={t("home.metaTitle")} />
         <meta
           property="og:description"
-          content="Discover premium products curated for the discerning customer."
+          content={t("home.heroSubtitle")}
         />
       </Helmet>
 
@@ -90,28 +80,19 @@ export default function Index() {
                 >
                   <Sparkles className="h-4 w-4 text-primary" />
                 </motion.div>
-                <span className="text-sm text-muted-foreground">New Collection Available</span>
+                <span className="text-sm text-muted-foreground">{t("home.badge")}</span>
               </div>
             </FadeUp>
 
             <FadeUp delay={0.25} y={40}>
               <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-                Elevate Your{" "}
-                <motion.span
-                  className="gradient-text inline-block"
-                  animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                  style={{ backgroundSize: "200% auto" }}
-                >
-                  Style
-                </motion.span>
+                {t("home.heroTitle")}
               </h1>
             </FadeUp>
 
             <FadeUp delay={0.4}>
               <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto">
-                Discover premium products curated for the discerning customer.
-                Quality meets elegance in every piece.
+                {t("home.heroSubtitle")}
               </p>
             </FadeUp>
 
@@ -120,7 +101,7 @@ export default function Index() {
                 <Link to="/products">
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
                     <Button variant="hero" size="xl">
-                      Shop Now
+                      {t("common.shopNow")}
                       <motion.span
                         animate={{ x: [0, 4, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
@@ -133,7 +114,7 @@ export default function Index() {
                 <Link to="/categories">
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
                     <Button variant="outline" size="xl">
-                      Explore Categories
+                      {t("home.exploreCategories")}
                     </Button>
                   </motion.div>
                 </Link>
@@ -168,12 +149,12 @@ export default function Index() {
           <FadeInView direction="up">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="font-display text-3xl md:text-4xl font-bold">Featured Products</h2>
-                <p className="text-muted-foreground mt-2">Hand-picked selections for you</p>
+                <h2 className="font-display text-3xl md:text-4xl font-bold">{t("home.featuredProducts")}</h2>
+                <p className="text-muted-foreground mt-2">{t("home.featuredSubtitle")}</p>
               </div>
               <Link to="/products?featured=true">
                 <Button variant="ghost">
-                  View All
+                  {t("common.viewAll")}
                   <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               </Link>
@@ -185,9 +166,9 @@ export default function Index() {
           {!loading && featuredProducts.length === 0 && (
             <FadeInView>
               <div className="text-center py-16 bg-card/50 rounded-lg border border-border">
-                <p className="text-muted-foreground mb-4">No featured products yet.</p>
+                <p className="text-muted-foreground mb-4">{t("home.noFeatured")}</p>
                 <Link to="/admin/products">
-                  <Button variant="gold">Add Products</Button>
+                  <Button variant="gold">{t("home.addProducts")}</Button>
                 </Link>
               </div>
             </FadeInView>
@@ -200,20 +181,20 @@ export default function Index() {
         <div className="container">
           <div ref={ctaRef} className="max-w-2xl mx-auto text-center space-y-6">
             <h2 className="font-display text-3xl md:text-4xl font-bold">
-              Join Our Newsletter
+              {t("home.newsletter")}
             </h2>
             <p className="text-muted-foreground">
-              Subscribe to get special offers, free giveaways, and exclusive deals.
+              {t("home.newsletterDesc")}
             </p>
             <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t("home.emailPlaceholder")}
                 className="flex-1 px-4 py-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary transition-shadow duration-300"
               />
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
                 <Button variant="gold" type="submit">
-                  Subscribe
+                  {t("common.subscribe")}
                 </Button>
               </motion.div>
             </form>

@@ -6,7 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
+import { WishlistProvider } from "@/hooks/useWishlist";
 import { ThemeProvider } from "@/hooks/useTheme";
+import { useDirection } from "@/hooks/useDirection";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Products from "./pages/Products";
@@ -30,45 +32,54 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function AppContent() {
+  useDirection();
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/products" element={<Products />} />
+      <Route path="/products/:slug" element={<ProductDetail />} />
+      <Route path="/categories" element={<Categories />} />
+      <Route path="/categories/:slug" element={<CategoryDetail />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
+      <Route path="/account" element={<Account />} />
+      <Route path="/orders" element={<Orders />} />
+      <Route path="/about" element={<About />} />
+
+      {/* Admin Routes */}
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/products" element={<ProductsList />} />
+      <Route path="/admin/products/new" element={<ProductForm />} />
+      <Route path="/admin/products/:id/edit" element={<ProductForm />} />
+      <Route path="/admin/categories" element={<CategoriesList />} />
+      <Route path="/admin/categories/new" element={<CategoryForm />} />
+      <Route path="/admin/categories/:id/edit" element={<CategoryForm />} />
+      <Route path="/admin/orders" element={<OrdersList />} />
+      <Route path="/admin/users" element={<UsersList />} />
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
           <CartProvider>
+          <WishlistProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/products/:slug" element={<ProductDetail />} />
-                  <Route path="/categories" element={<Categories />} />
-                  <Route path="/categories/:slug" element={<CategoryDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
-                  <Route path="/account" element={<Account />} />
-                  <Route path="/orders" element={<Orders />} />
-                  <Route path="/about" element={<About />} />
-                  
-                  {/* Admin Routes */}
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/admin/products" element={<ProductsList />} />
-                  <Route path="/admin/products/new" element={<ProductForm />} />
-                  <Route path="/admin/products/:id/edit" element={<ProductForm />} />
-                  <Route path="/admin/categories" element={<CategoriesList />} />
-                  <Route path="/admin/categories/new" element={<CategoryForm />} />
-                  <Route path="/admin/categories/:id/edit" element={<CategoryForm />} />
-                  <Route path="/admin/orders" element={<OrdersList />} />
-                  <Route path="/admin/users" element={<UsersList />} />
-                  
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                <AppContent />
               </BrowserRouter>
             </TooltipProvider>
+          </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </ThemeProvider>

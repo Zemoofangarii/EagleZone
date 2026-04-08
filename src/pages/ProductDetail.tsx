@@ -3,22 +3,35 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Minus, Plus, ShoppingCart, Heart, ArrowLeft } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import { ProductCard } from "@/components/products/ProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import type { Product, ProductImage } from "@/types/database";
 import { Helmet } from "react-helmet-async";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { motion, AnimatePresence } from "framer-motion";
 import { FadeUp, imageReveal } from "@/components/animations/MotionWrappers";
+import { useTranslation } from "react-i18next";
 
 export default function ProductDetail() {
+  const { t } = useTranslation();
   const { slug } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -40,11 +53,49 @@ export default function ProductDetail() {
         return;
       }
 
-      setProduct(data as unknown as Product);
+      const productData = data as unknown as Product;
+      setProduct(productData);
       setLoading(false);
+
+      // Fetch related products from same categories
+      const { data: categoryLinks } = await supabase
+        .from("product_categories")
+        .select("category_id")
+        .eq("product_id", productData.id);
+
+      if (categoryLinks && categoryLinks.length > 0) {
+        const categoryIds = categoryLinks.map((c) => c.category_id);
+        const { data: relatedLinks } = await supabase
+          .from("product_categories")
+          .select("product_id")
+          .in("category_id", categoryIds)
+          .neq("product_id", productData.id);
+
+        if (relatedLinks && relatedLinks.length > 0) {
+          const uniqueIds = [...new Set(relatedLinks.map((r) => r.product_id))];
+          const { data: relatedData } = await supabase
+            .from("products")
+            .select("*, product_images (*), product_categories (category_id, categories (id, name, slug))")
+            .in("id", uniqueIds)
+            .eq("published", true)
+            .limit(12);
+
+          if (relatedData) {
+            type RelatedRow = (typeof relatedData)[number] & {
+              product_categories?: { category_id: string; categories: { id: string; name: string; slug: string } | null }[];
+            };
+            const mapped = (relatedData as RelatedRow[]).map((p) => ({
+              ...p,
+              categories: p.product_categories?.map((pc) => pc.categories).filter(Boolean),
+            }));
+            setRelatedProducts(mapped as unknown as Product[]);
+          }
+        }
+      }
     }
 
     fetchProduct();
+    setRelatedProducts([]);
   }, [slug, navigate]);
 
   async function handleAddToCart() {
@@ -74,7 +125,7 @@ export default function ProductDetail() {
 
   if (!product) return null;
 
-  const images = product.images || (product as any).product_images || [];
+  const images = product.images || product.product_images || [];
   const hasDiscount = product.compare_at_price && product.compare_at_price > product.price;
 
   return (
@@ -115,8 +166,8 @@ export default function ProductDetail() {
             className="mb-6"
             onClick={() => navigate("/products")}
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Products
+            <ArrowLeft className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
+            {t("product.backToProducts")}
           </Button>
         </motion.div>
 
@@ -220,7 +271,7 @@ export default function ProductDetail() {
             {/* Quantity */}
             <FadeUp delay={0.4}>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Quantity</label>
+                <label className="text-sm font-medium">{t("product.quantity")}</label>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border border-border rounded-lg">
                     <Button
@@ -266,12 +317,22 @@ export default function ProductDetail() {
                     disabled={isAddingToCart}
                   >
                     <ShoppingCart className="h-5 w-5 mr-2" />
-                    {isAddingToCart ? "Adding..." : "Add to Cart"}
+                    {isAddingToCart ? t("product.adding") : t("product.addToCart")}
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <Button variant="outline" size="xl">
-                    <Heart className="h-5 w-5" />
+                  <Button
+                    variant="outline"
+                    size="xl"
+                    onClick={() => product && toggleWishlist(product.id)}
+                  >
+                    <Heart
+                      className={`h-5 w-5 transition-colors ${
+                        product && isInWishlist(product.id)
+                          ? "fill-red-500 text-red-500"
+                          : ""
+                      }`}
+                    />
                   </Button>
                 </motion.div>
               </div>
@@ -281,7 +342,7 @@ export default function ProductDetail() {
             {product.description && (
               <FadeUp delay={0.6}>
                 <div className="pt-6 border-t border-border">
-                  <h3 className="font-semibold mb-3">Description</h3>
+                  <h3 className="font-semibold mb-3">{t("product.description")}</h3>
                   <div className="prose prose-sm text-muted-foreground">
                     {product.description}
                   </div>
@@ -290,6 +351,28 @@ export default function ProductDetail() {
             )}
           </div>
         </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <FadeUp delay={0.4}>
+            <div className="mt-16 pt-12 border-t border-border">
+              <h2 className="font-display text-2xl font-bold mb-6">{t("product.relatedProducts")}</h2>
+              <div className="px-12">
+                <Carousel opts={{ align: "start", loop: true }}>
+                  <CarouselContent>
+                    {relatedProducts.map((p) => (
+                      <CarouselItem key={p.id} className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                        <ProductCard product={p as Parameters<typeof ProductCard>[0]["product"]} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              </div>
+            </div>
+          </FadeUp>
+        )}
       </div>
     </MainLayout>
   );

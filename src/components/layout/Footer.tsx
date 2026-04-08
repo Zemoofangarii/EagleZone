@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="border-t border-border bg-card/50">
       <div className="container py-12 md:py-16">
@@ -8,57 +11,57 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              <span className="font-display text-2xl font-bold gradient-text">High Mirror</span>
+              <span className="font-display text-2xl font-bold gradient-text">{t("common.brandName")}</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              Premium products curated for the discerning customer.
+              {t("footer.tagline")}
             </p>
           </div>
 
           {/* Shop */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-sm uppercase tracking-wider">Shop</h4>
+            <h4 className="font-semibold text-sm uppercase tracking-wider">{t("footer.shop")}</h4>
             <nav className="flex flex-col gap-2">
               <Link to="/products" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                All Products
+                {t("footer.allProducts")}
               </Link>
               <Link to="/categories" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Categories
+                {t("footer.categories")}
               </Link>
               <Link to="/products?featured=true" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Featured
+                {t("footer.featured")}
               </Link>
             </nav>
           </div>
 
           {/* Support */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-sm uppercase tracking-wider">Support</h4>
+            <h4 className="font-semibold text-sm uppercase tracking-wider">{t("footer.support")}</h4>
             <nav className="flex flex-col gap-2">
               <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Contact Us
+                {t("footer.contactUs")}
               </Link>
               <Link to="/shipping" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Shipping
+                {t("footer.shipping")}
               </Link>
               <Link to="/returns" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Returns
+                {t("footer.returns")}
               </Link>
               <Link to="/faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                FAQ
+                {t("footer.faq")}
               </Link>
             </nav>
           </div>
 
           {/* Legal */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-sm uppercase tracking-wider">Legal</h4>
+            <h4 className="font-semibold text-sm uppercase tracking-wider">{t("footer.legal")}</h4>
             <nav className="flex flex-col gap-2">
               <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Privacy Policy
+                {t("footer.privacyPolicy")}
               </Link>
               <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Terms of Service
+                {t("footer.termsOfService")}
               </Link>
             </nav>
           </div>
@@ -66,7 +69,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center">
-            © {new Date().getFullYear()} High Mirror. All rights reserved.
+            {t("footer.copyright", { year: new Date().getFullYear() })}
           </p>
         </div>
       </div>

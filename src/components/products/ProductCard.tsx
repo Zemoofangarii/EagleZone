@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import type { Product, ProductImage } from "@/types/database";
 import { motion } from "framer-motion";
 
@@ -14,11 +15,18 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product.id, 1);
+  }
+
+  function handleToggleWishlist(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product.id);
   }
   const primaryImage = product.product_images?.[0]?.url || product.images?.[0]?.url;
   const hasDiscount = product.compare_at_price && product.compare_at_price > product.price;
@@ -71,6 +79,25 @@ export function ProductCard({ product }: ProductCardProps) {
             Featured
           </motion.span>
         )}
+
+        {/* Wishlist Button */}
+        <motion.button
+          onClick={handleToggleWishlist}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.2 }}
+          className={`absolute ${product.featured ? "top-10" : "top-3"} right-3 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center border border-border hover:border-red-500 transition-colors`}
+        >
+          <Heart
+            className={`h-4 w-4 transition-colors ${
+              isInWishlist(product.id)
+                ? "fill-red-500 text-red-500"
+                : "text-muted-foreground"
+            }`}
+          />
+        </motion.button>
       </Link>
 
       {/* Content */}
