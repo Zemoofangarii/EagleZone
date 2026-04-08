@@ -1,54 +1,9 @@
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { FadeUp, FadeInView, staggerContainer, staggerItem } from "@/components/animations/MotionWrappers";
 import { Award, Gem, Heart, ShieldCheck, Truck, Users } from "lucide-react";
-
-const stats = [
-  { value: "10K+", label: "Happy Customers" },
-  { value: "500+", label: "Premium Products" },
-  { value: "50+", label: "Global Brands" },
-  { value: "24/7", label: "Customer Support" },
-];
-
-const values = [
-  {
-    icon: Gem,
-    title: "Premium Quality",
-    description:
-      "Every product is handpicked and rigorously tested to meet our exceptional standards of quality and craftsmanship.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Authenticity Guaranteed",
-    description:
-      "We work directly with brands and authorized distributors to ensure every item is 100% authentic.",
-  },
-  {
-    icon: Heart,
-    title: "Customer First",
-    description:
-      "Your satisfaction is our priority. We go above and beyond to deliver an experience you'll love.",
-  },
-  {
-    icon: Truck,
-    title: "Fast & Free Shipping",
-    description:
-      "Enjoy complimentary shipping on all orders, with express delivery options available worldwide.",
-  },
-  {
-    icon: Award,
-    title: "Curated Selection",
-    description:
-      "Our team of experts curates each collection to bring you the finest and most trending products.",
-  },
-  {
-    icon: Users,
-    title: "Community Driven",
-    description:
-      "Join a growing community of discerning shoppers who value quality, style, and authenticity.",
-  },
-];
 
 const timeline = [
   { year: "2023", title: "The Beginning", description: "Eagle Zone was born from a passion for premium products and exceptional customer experiences." },
@@ -58,6 +13,48 @@ const timeline = [
 ];
 
 export default function About() {
+  const { t } = useTranslation();
+
+  const stats = [
+    { value: "10K+", label: t("about.happyCustomers") },
+    { value: "500+", label: t("about.premiumProducts") },
+    { value: "50+", label: t("about.globalBrands") },
+    { value: "24/7", label: t("about.customerSupport") },
+  ];
+
+  const values = [
+    {
+      icon: Gem,
+      title: t("about.premiumQuality"),
+      description: t("about.premiumQualityDesc"),
+    },
+    {
+      icon: ShieldCheck,
+      title: t("about.authenticity"),
+      description: t("about.authenticityDesc"),
+    },
+    {
+      icon: Heart,
+      title: t("about.customerFirst"),
+      description: t("about.customerFirstDesc"),
+    },
+    {
+      icon: Truck,
+      title: t("about.fastShipping"),
+      description: t("about.fastShippingDesc"),
+    },
+    {
+      icon: Award,
+      title: t("about.curatedSelection"),
+      description: t("about.curatedSelectionDesc"),
+    },
+    {
+      icon: Users,
+      title: t("about.communityDriven"),
+      description: t("about.communityDrivenDesc"),
+    },
+  ];
+
   return (
     <MainLayout>
       <Helmet>
@@ -77,20 +74,17 @@ export default function About() {
           <div className="max-w-3xl mx-auto text-center">
             <FadeUp>
               <span className="inline-block px-4 py-1.5 mb-6 text-xs font-semibold uppercase tracking-widest text-primary border border-primary/30 rounded-full">
-                Our Story
+                {t("about.badge")}
               </span>
             </FadeUp>
             <FadeUp delay={0.15}>
               <h1 className="font-display text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                Redefining{" "}
-                <span className="gradient-text">Premium Shopping</span>
+                {t("about.title")}
               </h1>
             </FadeUp>
             <FadeUp delay={0.3}>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                At Eagle Zone, we believe everyone deserves access to
-                exceptional products. We curate the finest selection of premium
-                goods, bringing quality and elegance to your doorstep.
+                {t("about.subtitle")}
               </p>
             </FadeUp>
           </div>
@@ -132,21 +126,16 @@ export default function About() {
             <FadeInView direction="left">
               <div className="space-y-6">
                 <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-                  Our Mission
+                  {t("about.missionBadge")}
                 </span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold">
-                  Elevating Everyday Essentials
+                  {t("about.missionTitle")}
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  We started Eagle Zone with a simple belief: premium products
-                  shouldn't come with premium hassles. Our mission is to make
-                  luxury accessible, authentic, and effortless.
+                  {t("about.missionP1")}
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  Every product in our collection goes through a meticulous
-                  selection process. We partner with trusted brands and artisans
-                  worldwide to bring you items that combine exceptional quality
-                  with timeless design.
+                  {t("about.missionP2")}
                 </p>
               </div>
             </FadeInView>
@@ -158,11 +147,10 @@ export default function About() {
                     <div className="text-center space-y-4 p-8">
                       <Gem className="h-16 w-16 text-primary mx-auto" />
                       <p className="font-display text-2xl font-bold">
-                        Quality Over Quantity
+                        {t("about.missionP3")}
                       </p>
                       <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                        We'd rather offer 500 exceptional products than 50,000
-                        mediocre ones.
+                        {t("about.missionP3Desc")}
                       </p>
                     </div>
                   </div>
@@ -180,14 +168,13 @@ export default function About() {
         <div className="container mx-auto px-4">
           <FadeInView className="text-center mb-16">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-              What We Stand For
+              {t("about.valuesBadge")}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold mt-4">
-              Our Core Values
+              {t("about.valuesTitle")}
             </h2>
             <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-              These principles guide everything we do, from product selection to
-              customer service.
+              {t("about.valuesSubtitle")}
             </p>
           </FadeInView>
 
@@ -224,10 +211,10 @@ export default function About() {
         <div className="container mx-auto px-4">
           <FadeInView className="text-center mb-16">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-              Our Journey
+              {t("about.journeyBadge")}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold mt-4">
-              The Eagle Zone Story
+              {t("about.journeyTitle")}
             </h2>
           </FadeInView>
 
@@ -270,25 +257,23 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
               <div className="relative z-10 space-y-6">
                 <h2 className="font-display text-3xl md:text-4xl font-bold">
-                  Ready to Experience{" "}
-                  <span className="gradient-text">Premium?</span>
+                  {t("about.ctaTitle")}
                 </h2>
                 <p className="text-muted-foreground max-w-lg mx-auto">
-                  Join thousands of satisfied customers who trust Eagle Zone
-                  for their premium product needs.
+                  {t("about.ctaSubtitle")}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
                   <a
                     href="/products"
                     className="inline-flex items-center justify-center px-8 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
                   >
-                    Shop Now
+                    {t("common.shopNow")}
                   </a>
                   <a
                     href="/categories"
                     className="inline-flex items-center justify-center px-8 py-3 rounded-full border border-border font-medium hover:bg-muted transition-colors"
                   >
-                    Browse Categories
+                    {t("common.browseCategories")}
                   </a>
                 </div>
               </div>

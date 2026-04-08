@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
@@ -10,6 +11,7 @@ export default function Cart() {
   const { items, itemCount, subtotal, isLoading, updateQuantity, removeItem } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   function handleCheckout() {
     if (!user) {
@@ -36,16 +38,16 @@ export default function Cart() {
   return (
     <MainLayout>
       <Helmet>
-        <title>Shopping Cart - Eagle Zone</title>
+        <title>{t("cart.title")} - Eagle Zone</title>
         <meta name="description" content="Review your shopping cart and proceed to checkout." />
       </Helmet>
 
       <div className="container py-8 md:py-12">
         <h1 className="font-display text-3xl md:text-4xl font-bold mb-8">
-          Shopping Cart
+          {t("cart.title")}
           {itemCount > 0 && (
             <span className="text-muted-foreground font-normal text-xl ml-2">
-              ({itemCount} {itemCount === 1 ? "item" : "items"})
+              ({itemCount} {itemCount === 1 ? t("header.item") : t("header.items")})
             </span>
           )}
         </h1>
@@ -56,14 +58,14 @@ export default function Cart() {
               <ShoppingBag className="h-12 w-12 text-muted-foreground" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold mb-2">Your cart is empty</h2>
+              <h2 className="text-xl font-semibold mb-2">{t("cart.empty")}</h2>
               <p className="text-muted-foreground">
-                Looks like you haven't added anything to your cart yet.
+                {t("cart.emptyDesc")}
               </p>
             </div>
             <Link to="/products">
               <Button variant="gold" size="lg">
-                Continue Shopping
+                {t("common.continueShopping")}
               </Button>
             </Link>
           </div>
@@ -156,22 +158,22 @@ export default function Cart() {
             {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 bg-card rounded-lg border border-border p-6 space-y-4">
-                <h2 className="font-display text-xl font-bold">Order Summary</h2>
+                <h2 className="font-display text-xl font-bold">{t("cart.orderSummary")}</h2>
 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">{t("cart.subtotal")}</span>
                     <span className="font-medium">${subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className="font-medium">Calculated at checkout</span>
+                    <span className="text-muted-foreground">{t("cart.shipping")}</span>
+                    <span className="font-medium">{t("cart.calculatedAtCheckout")}</span>
                   </div>
                 </div>
 
                 <div className="border-t border-border pt-4">
                   <div className="flex justify-between text-lg font-bold">
-                    <span>Total</span>
+                    <span>{t("cart.total")}</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
                 </div>
@@ -182,13 +184,13 @@ export default function Cart() {
                   className="w-full"
                   onClick={handleCheckout}
                 >
-                  Proceed to Checkout
+                  {t("cart.checkout")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
                 <Link to="/products" className="block">
                   <Button variant="outline" className="w-full">
-                    Continue Shopping
+                    {t("common.continueShopping")}
                   </Button>
                 </Link>
               </div>

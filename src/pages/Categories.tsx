@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,6 +16,7 @@ interface Category {
 }
 
 export default function Categories() {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -65,10 +67,10 @@ export default function Categories() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
-            Shop by <span className="gradient-text">Category</span>
+            {t("categories.heading")}
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Explore our curated collections and find the perfect products for your needs.
+            {t("categories.subtitle")}
           </p>
         </div>
 
@@ -81,7 +83,7 @@ export default function Categories() {
           </div>
         ) : categories.length === 0 ? (
           <div className="text-center py-16 bg-card/50 rounded-lg border border-border">
-            <p className="text-muted-foreground mb-4">No categories found.</p>
+            <p className="text-muted-foreground mb-4">{t("categories.noCategories")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -116,7 +118,7 @@ export default function Categories() {
                     </p>
                   )}
                   <span className="text-sm text-primary font-medium">
-                    {category.product_count} {category.product_count === 1 ? "Product" : "Products"}
+                    {category.product_count} {category.product_count === 1 ? t("categories.product") : t("categories.products")}
                   </span>
                 </div>
               </Link>

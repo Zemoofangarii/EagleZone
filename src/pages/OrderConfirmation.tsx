@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { CheckCircle, Package, ArrowRight } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -21,6 +22,7 @@ interface OrderItemWithProduct {
 }
 
 export default function OrderConfirmation() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItemWithProduct[]>([]);
@@ -77,7 +79,7 @@ export default function OrderConfirmation() {
           </div>
 
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-4">
-            Thank You for Your Order!
+            {t("orderConfirmation.heading")}
           </h1>
 
           {order && (
@@ -89,18 +91,18 @@ export default function OrderConfirmation() {
           <div className="bg-card rounded-lg border border-border p-6 mb-8 text-left">
             <div className="flex items-center gap-3 mb-4">
               <Package className="h-5 w-5 text-primary" />
-              <h2 className="font-semibold">What's Next?</h2>
+              <h2 className="font-semibold">{t("orderConfirmation.whatsNext")}</h2>
             </div>
             <ul className="space-y-2 text-muted-foreground">
-              <li>• You will receive an email confirmation shortly.</li>
-              <li>• We'll notify you when your order ships.</li>
-              <li>• Track your order in your account dashboard.</li>
+              <li>• {t("orderConfirmation.emailConfirmation")}</li>
+              <li>• {t("orderConfirmation.shipNotification")}</li>
+              <li>• {t("orderConfirmation.trackOrder")}</li>
             </ul>
           </div>
 
           {orderItems.length > 0 && (
             <div className="bg-card rounded-lg border border-border p-6 mb-8 text-left">
-              <h3 className="font-semibold mb-4">Order Items</h3>
+              <h3 className="font-semibold mb-4">{t("orderConfirmation.orderItems")}</h3>
               <div className="divide-y divide-border">
                 {orderItems.map((item) => {
                   const image = item.products?.product_images?.[0];
@@ -150,22 +152,22 @@ export default function OrderConfirmation() {
 
           {order && (
             <div className="bg-card rounded-lg border border-border p-6 mb-8">
-              <h3 className="font-semibold mb-4">Order Summary</h3>
+              <h3 className="font-semibold mb-4">{t("orderConfirmation.orderSummary")}</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t("cart.subtotal")}</span>
                   <span>${Number(order.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span className="text-green-500">Free</span>
+                  <span className="text-muted-foreground">{t("cart.shipping")}</span>
+                  <span className="text-green-500">{t("common.free")}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax</span>
+                  <span className="text-muted-foreground">{t("checkout.tax")}</span>
                   <span>${Number(order.tax).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold pt-2 border-t border-border">
-                  <span>Total</span>
+                  <span>{t("cart.total")}</span>
                   <span>${Number(order.total).toFixed(2)}</span>
                 </div>
               </div>
@@ -175,13 +177,13 @@ export default function OrderConfirmation() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/products">
               <Button variant="gold" size="lg">
-                Continue Shopping
+                {t("common.continueShopping")}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <Link to="/orders">
               <Button variant="outline" size="lg">
-                View Orders
+                {t("orderConfirmation.viewOrders")}
               </Button>
             </Link>
           </div>

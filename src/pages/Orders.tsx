@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Package, ChevronRight, Loader2, ShoppingBag } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -31,6 +32,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function Orders() {
+  const { t } = useTranslation();
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -96,19 +98,19 @@ export default function Orders() {
 
       <div className="container py-8 md:py-12">
         <div className="max-w-4xl mx-auto">
-          <h1 className="font-display text-3xl md:text-4xl font-bold mb-8">My Orders</h1>
+          <h1 className="font-display text-3xl md:text-4xl font-bold mb-8">{t("orders.title")}</h1>
 
           {orders.length === 0 ? (
             <div className="text-center py-16 bg-card rounded-lg border border-border">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
                 <ShoppingBag className="h-10 w-10 text-muted-foreground" />
               </div>
-              <h2 className="text-xl font-semibold mb-2">No orders yet</h2>
+              <h2 className="text-xl font-semibold mb-2">{t("orders.noOrders")}</h2>
               <p className="text-muted-foreground mb-6">
-                When you place an order, it will appear here.
+                {t("orders.noOrdersDesc")}
               </p>
               <Link to="/products">
-                <Button variant="gold">Start Shopping</Button>
+                <Button variant="gold">{t("orders.startShopping")}</Button>
               </Link>
             </div>
           ) : (
@@ -158,7 +160,7 @@ export default function Orders() {
                       ))}
                       {order.order_items.length > 3 && (
                         <p className="text-sm text-muted-foreground">
-                          +{order.order_items.length - 3} more items
+                          {t("orders.moreItems", { count: order.order_items.length - 3 })}
                         </p>
                       )}
                     </div>
@@ -170,7 +172,7 @@ export default function Orders() {
                       size="sm"
                       onClick={() => navigate(`/order-confirmation/${order.id}`)}
                     >
-                      View Details
+                      {t("orders.viewDetails")}
                       <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
                   </div>

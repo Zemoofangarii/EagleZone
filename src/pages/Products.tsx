@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/select";
 
 export default function Products() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -120,7 +122,7 @@ export default function Products() {
       <Helmet>
         <title>
           {selectedCategory ? `${selectedCategory.name} - ` : ""}
-          {featuredOnly ? "Featured Products" : "Shop All Products"} - Eagle Zone
+          {featuredOnly ? t("products.featured") : t("products.shopAll")} - Eagle Zone
         </title>
         <meta
           name="description"
@@ -135,15 +137,15 @@ export default function Products() {
             {selectedCategory
               ? selectedCategory.name
               : featuredOnly
-              ? "Featured Products"
-              : "All Products"}
+              ? t("products.featured")
+              : t("products.shopAll")}
           </h1>
           <p className="text-muted-foreground">
             {selectedCategory
-              ? `Browse products in ${selectedCategory.name}`
+              ? t("products.browseIn", { category: selectedCategory.name })
               : featuredOnly
-              ? "Hand-picked selections just for you"
-              : "Discover our complete collection of premium products"}
+              ? t("products.featuredSubtitle")
+              : t("products.discoverAll")}
           </p>
         </div>
 
@@ -155,7 +157,7 @@ export default function Products() {
               size="sm"
               onClick={handleClearFilters}
             >
-              All
+              {t("products.all")}
             </Button>
             <Button
               variant={featuredOnly ? "default" : "outline"}
@@ -170,16 +172,16 @@ export default function Products() {
                 setSearchParams(newParams);
               }}
             >
-              Featured
+              {t("products.featured")}
             </Button>
 
             {/* Category Filter */}
             <Select value={categoryId || "all"} onValueChange={handleCategoryChange}>
               <SelectTrigger className="w-[160px] bg-secondary">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder={t("products.category")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="all">{t("products.allCategories")}</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.id}>
                     {cat.name}
@@ -197,10 +199,10 @@ export default function Products() {
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                  <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                  <SelectItem value="name">Name A-Z</SelectItem>
+                  <SelectItem value="newest">{t("products.newest")}</SelectItem>
+                  <SelectItem value="price-asc">{t("products.priceLowHigh")}</SelectItem>
+                  <SelectItem value="price-desc">{t("products.priceHighLow")}</SelectItem>
+                  <SelectItem value="name">{t("products.nameAZ")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -213,9 +215,9 @@ export default function Products() {
         {/* Empty State */}
         {!loading && products.length === 0 && (
           <div className="text-center py-16 bg-card/50 rounded-lg border border-border">
-            <p className="text-muted-foreground mb-4">No products found.</p>
+            <p className="text-muted-foreground mb-4">{t("products.noProducts")}</p>
             <Button variant="outline" onClick={handleClearFilters}>
-              Clear Filters
+              {t("common.clearFilters")}
             </Button>
           </div>
         )}

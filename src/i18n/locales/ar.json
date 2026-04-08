@@ -229,6 +229,22 @@
     "removed": "تمت الإزالة من المفضلة",
     "removedDesc": "تمت إزالة المنتج من المفضلة."
   },
+  "orders": {
+    "title": "طلباتي",
+    "noOrders": "لا توجد طلبات بعد",
+    "noOrdersDesc": "عند تقديم طلب، سيظهر هنا.",
+    "startShopping": "ابدأ التسوق",
+    "viewDetails": "عرض التفاصيل",
+    "moreItems": "+{{count}} منتجات إضافية"
+  },
+  "categories": {
+    "title": "الفئات",
+    "heading": "تسوق حسب الفئة",
+    "subtitle": "استكشف مجموعاتنا المختارة واعثر على المنتجات المثالية لاحتياجاتك.",
+    "noCategories": "لا توجد فئات.",
+    "product": "منتج",
+    "products": "منتجات"
+  },
   "orderConfirmation": {
     "title": "تم تأكيد الطلب",
     "heading": "شكراً لطلبك!",

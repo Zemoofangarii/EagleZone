@@ -229,6 +229,22 @@
     "removed": "Removed from wishlist",
     "removedDesc": "Item removed from your wishlist."
   },
+  "orders": {
+    "title": "My Orders",
+    "noOrders": "No orders yet",
+    "noOrdersDesc": "When you place an order, it will appear here.",
+    "startShopping": "Start Shopping",
+    "viewDetails": "View Details",
+    "moreItems": "+{{count}} more items"
+  },
+  "categories": {
+    "title": "Categories",
+    "heading": "Shop by Category",
+    "subtitle": "Explore our curated collections and find the perfect products for your needs.",
+    "noCategories": "No categories found.",
+    "product": "Product",
+    "products": "Products"
+  },
   "orderConfirmation": {
     "title": "Order Confirmed",
     "heading": "Thank You for Your Order!",

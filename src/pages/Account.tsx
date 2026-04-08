@@ -9,10 +9,12 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 export default function Account() {
   const { user, profile, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   
@@ -58,14 +60,14 @@ export default function Account() {
       if (error) throw error;
 
       toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
+        title: t("account.profileUpdated"),
+        description: t("account.profileUpdatedDesc"),
       });
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
+        title: t("common.error"),
+        description: t("account.updateFailed"),
         variant: "destructive",
       });
     } finally {
@@ -94,7 +96,7 @@ export default function Account() {
 
       <div className="container py-8 md:py-12">
         <div className="max-w-2xl mx-auto">
-          <h1 className="font-display text-3xl md:text-4xl font-bold mb-8">My Account</h1>
+          <h1 className="font-display text-3xl md:text-4xl font-bold mb-8">{t("account.title")}</h1>
 
           {/* Profile Section */}
           <div className="bg-card rounded-lg border border-border p-6 mb-6">
@@ -110,7 +112,7 @@ export default function Account() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("account.email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -121,11 +123,11 @@ export default function Account() {
                     className="pl-10 bg-muted"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+                <p className="text-xs text-muted-foreground">{t("account.emailNote")}</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="full_name">Full Name</Label>
+                <Label htmlFor="full_name">{t("account.fullName")}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -133,14 +135,14 @@ export default function Account() {
                     name="full_name"
                     value={formData.full_name}
                     onChange={handleChange}
-                    placeholder="Enter your full name"
+                    placeholder={t("account.fullNamePlaceholder")}
                     className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{t("account.phone")}</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -149,7 +151,7 @@ export default function Account() {
                     type="tel"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Enter your phone number"
+                    placeholder={t("account.phonePlaceholder")}
                     className="pl-10"
                   />
                 </div>
@@ -159,12 +161,12 @@ export default function Account() {
                 {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
+                    {t("common.saving")}
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4 mr-2" />
-                    Save Changes
+                    {t("common.save")}
                   </>
                 )}
               </Button>
@@ -177,15 +179,15 @@ export default function Account() {
               onClick={() => navigate("/orders")}
               className="bg-card rounded-lg border border-border p-6 text-left hover:border-primary/50 transition-colors"
             >
-              <h3 className="font-semibold mb-1">Order History</h3>
-              <p className="text-sm text-muted-foreground">View your past orders and track shipments</p>
+              <h3 className="font-semibold mb-1">{t("account.orderHistory")}</h3>
+              <p className="text-sm text-muted-foreground">{t("account.orderHistoryDesc")}</p>
             </button>
             <button
               onClick={() => navigate("/addresses")}
               className="bg-card rounded-lg border border-border p-6 text-left hover:border-primary/50 transition-colors"
             >
-              <h3 className="font-semibold mb-1">Addresses</h3>
-              <p className="text-sm text-muted-foreground">Manage your shipping addresses</p>
+              <h3 className="font-semibold mb-1">{t("account.addresses")}</h3>
+              <p className="text-sm text-muted-foreground">{t("account.addressesDesc")}</p>
             </button>
           </div>
         </div>

@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { signIn, signUp } from "@/lib/auth";
 import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -27,6 +28,7 @@ export default function Auth() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const {
     register,
@@ -51,30 +53,30 @@ export default function Auth() {
         const { error } = await signIn(data.email, data.password);
         if (error) {
           toast({
-            title: "Sign in failed",
+            title: t("auth.signInFailed"),
             description: error.message,
             variant: "destructive",
           });
           return;
         }
         toast({
-          title: "Welcome back!",
-          description: "You have been signed in successfully.",
+          title: t("auth.signInSuccess"),
+          description: t("auth.signInSuccessDesc"),
         });
         navigate("/");
       } else {
         const { error } = await signUp(data.email, data.password, data.fullName);
         if (error) {
           toast({
-            title: "Sign up failed",
+            title: t("auth.signUpFailed"),
             description: error.message,
             variant: "destructive",
           });
           return;
         }
         toast({
-          title: "Account created!",
-          description: "You have been signed up successfully.",
+          title: t("auth.signUpSuccess"),
+          description: t("auth.signUpSuccessDesc"),
         });
         navigate("/");
       }
@@ -99,7 +101,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex bg-background">
       <Helmet>
-        <title>{isLogin ? "Sign In" : "Create Account"} - Eagle Zone</title>
+        <title>{isLogin ? t("auth.signInTitle") : t("auth.createAccountTitle")} - Eagle Zone</title>
         <meta name="description" content="Sign in to your Eagle Zone account or create a new one." />
       </Helmet>
 
@@ -109,19 +111,19 @@ export default function Auth() {
           {/* Logo */}
           <div className="text-center">
             <a href="/" className="inline-block">
-              <span className="font-display text-3xl font-bold gradient-text">Eagle Zone</span>
+              <span className="font-display text-3xl font-bold gradient-text">{t("common.brandName")}</span>
             </a>
           </div>
 
           {/* Header */}
           <div className="text-center space-y-2">
             <h1 className="font-display text-2xl font-bold">
-              {isLogin ? "Welcome back" : "Create your account"}
+              {isLogin ? t("auth.welcomeBack") : t("auth.createAccountTitle")}
             </h1>
             <p className="text-muted-foreground">
               {isLogin
-                ? "Enter your credentials to access your account"
-                : "Start your journey with Eagle Zone today"}
+                ? t("auth.signInSubtitle")
+                : t("auth.createAccountSubtitle")}
             </p>
           </div>
 
@@ -129,11 +131,11 @@ export default function Auth() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">{t("auth.fullName")}</Label>
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={t("auth.fullNamePlaceholder")}
                   {...register("fullName")}
                   className="bg-secondary border-border"
                 />
@@ -141,11 +143,11 @@ export default function Auth() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("auth.emailPlaceholder")}
                 {...register("email")}
                 className="bg-secondary border-border"
               />
@@ -155,12 +157,12 @@ export default function Auth() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder={t("auth.passwordPlaceholder")}
                   {...register("password")}
                   className="bg-secondary border-border pr-10"
                 />
@@ -184,19 +186,19 @@ export default function Auth() {
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {isLogin ? "Sign In" : "Create Account"}
+              {isLogin ? t("common.signIn") : t("common.createAccount")}
             </Button>
           </form>
 
           {/* Toggle */}
           <p className="text-center text-sm text-muted-foreground">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+            {isLogin ? t("auth.noAccount") : t("auth.hasAccount")}{" "}
             <button
               type="button"
               onClick={toggleMode}
               className="text-primary font-medium hover:underline"
             >
-              {isLogin ? "Sign up" : "Sign in"}
+              {isLogin ? t("auth.signUp") : t("auth.signInLink")}
             </button>
           </p>
         </div>
@@ -208,10 +210,10 @@ export default function Auth() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/20 rounded-full blur-3xl" />
         <div className="relative text-center space-y-4 p-8">
           <h2 className="font-display text-4xl font-bold">
-            Premium Shopping Experience
+            {t("auth.premiumExperience")}
           </h2>
           <p className="text-muted-foreground max-w-sm mx-auto">
-            Join thousands of satisfied customers who trust Eagle Zone for their premium product needs.
+            {t("auth.premiumDesc")}
           </p>
         </div>
       </div>
