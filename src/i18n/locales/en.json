@@ -1,6 +1,6 @@
 {
   "common": {
-    "brandName": "High Mirror",
+    "brandName": "Eagle Zone",
     "shopNow": "Shop Now",
     "continueShopping": "Continue Shopping",
     "browseProducts": "Browse Products",
@@ -50,10 +50,10 @@
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
-    "copyright": "© {{year}} High Mirror. All rights reserved."
+    "copyright": "© {{year}} Eagle Zone. All rights reserved."
   },
   "home": {
-    "metaTitle": "High Mirror - Premium E-Commerce Store",
+    "metaTitle": "Eagle Zone - Premium E-Commerce Store",
     "badge": "New Collection Available",
     "heroTitle": "Elevate Your Style",
     "heroSubtitle": "Discover premium products curated for the discerning customer. Quality meets elegance in every piece.",
@@ -73,7 +73,7 @@
     "emailPlaceholder": "Enter your email"
   },
   "products": {
-    "metaTitle": "Products - High Mirror",
+    "metaTitle": "Products - Eagle Zone",
     "shopAll": "Shop All Products",
     "featured": "Featured Products",
     "featuredSubtitle": "Hand-picked selections just for you",
@@ -142,7 +142,7 @@
     "createAccountTitle": "Create Account",
     "welcomeBack": "Welcome back",
     "signInSubtitle": "Enter your credentials to access your account",
-    "createAccountSubtitle": "Start your journey with High Mirror today",
+    "createAccountSubtitle": "Start your journey with Eagle Zone today",
     "fullName": "Full Name",
     "fullNamePlaceholder": "John Doe",
     "email": "Email",
@@ -154,7 +154,7 @@
     "signUp": "Sign up",
     "signInLink": "Sign in",
     "premiumExperience": "Premium Shopping Experience",
-    "premiumDesc": "Join thousands of satisfied customers who trust High Mirror for their premium product needs.",
+    "premiumDesc": "Join thousands of satisfied customers who trust Eagle Zone for their premium product needs.",
     "signInFailed": "Sign in failed",
     "signInSuccess": "Welcome back!",
     "signInSuccessDesc": "You have been signed in successfully.",
@@ -182,14 +182,14 @@
   "about": {
     "badge": "Our Story",
     "title": "Redefining Premium Shopping",
-    "subtitle": "At High Mirror, we believe everyone deserves access to exceptional products. We curate the finest selection of premium goods, bringing quality and elegance to your doorstep.",
+    "subtitle": "At Eagle Zone, we believe everyone deserves access to exceptional products. We curate the finest selection of premium goods, bringing quality and elegance to your doorstep.",
     "happyCustomers": "Happy Customers",
     "premiumProducts": "Premium Products",
     "globalBrands": "Global Brands",
     "customerSupport": "Customer Support",
     "missionBadge": "Our Mission",
     "missionTitle": "Elevating Everyday Essentials",
-    "missionP1": "We started High Mirror with a simple belief: premium products shouldn't come with premium hassles. Our mission is to make luxury accessible, authentic, and effortless.",
+    "missionP1": "We started Eagle Zone with a simple belief: premium products shouldn't come with premium hassles. Our mission is to make luxury accessible, authentic, and effortless.",
     "missionP2": "Every product in our collection goes through a meticulous selection process. We partner with trusted brands and artisans worldwide to bring you items that combine exceptional quality with timeless design.",
     "missionP3": "Quality Over Quantity",
     "missionP3Desc": "We'd rather offer 500 exceptional products than 50,000 mediocre ones.",
@@ -209,9 +209,9 @@
     "communityDriven": "Community Driven",
     "communityDrivenDesc": "Join a growing community of discerning shoppers who value quality, style, and authenticity.",
     "journeyBadge": "Our Journey",
-    "journeyTitle": "The High Mirror Story",
+    "journeyTitle": "The Eagle Zone Story",
     "ctaTitle": "Ready to Experience Premium?",
-    "ctaSubtitle": "Join thousands of satisfied customers who trust High Mirror for their premium product needs."
+    "ctaSubtitle": "Join thousands of satisfied customers who trust Eagle Zone for their premium product needs."
   },
   "notFound": {
     "code": "404",

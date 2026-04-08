@@ -57,7 +57,7 @@ export default function Categories() {
   return (
     <MainLayout>
       <Helmet>
-        <title>Categories - High Mirror</title>
+        <title>Categories - Eagle Zone</title>
         <meta name="description" content="Browse our product categories and find what you're looking for." />
       </Helmet>
 

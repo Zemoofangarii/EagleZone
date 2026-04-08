@@ -88,7 +88,7 @@ export default function Account() {
   return (
     <MainLayout>
       <Helmet>
-        <title>My Account - High Mirror</title>
+        <title>My Account - Eagle Zone</title>
         <meta name="description" content="Manage your account settings and profile" />
       </Helmet>
 

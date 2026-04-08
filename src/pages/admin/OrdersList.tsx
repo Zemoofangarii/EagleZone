@@ -112,7 +112,7 @@ export default function OrdersList() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>Orders - High Mirror Admin</title>
+        <title>Orders - Eagle Zone Admin</title>
       </Helmet>
 
       <div className="space-y-6">

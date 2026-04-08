@@ -54,7 +54,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
           <Link to="/admin" className="flex items-center gap-2">
-            <span className="font-display text-xl font-bold gradient-text">High Mirror</span>
+            <span className="font-display text-xl font-bold gradient-text">Eagle Zone</span>
             <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded font-medium">
               Admin
             </span>

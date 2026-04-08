@@ -131,7 +131,7 @@ export default function ProductDetail() {
   return (
     <MainLayout>
       <Helmet>
-        <title>{product.seo_title || product.title} - High Mirror</title>
+        <title>{product.seo_title || product.title} - Eagle Zone</title>
         <meta name="description" content={product.seo_description || product.short_description || ""} />
         <meta property="og:title" content={product.seo_title || product.title} />
         <meta property="og:description" content={product.seo_description || product.short_description || ""} />

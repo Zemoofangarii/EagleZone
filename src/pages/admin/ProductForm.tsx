@@ -303,7 +303,7 @@ export default function ProductForm() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>{isEditing ? "Edit Product" : "Add Product"} - High Mirror Admin</title>
+        <title>{isEditing ? "Edit Product" : "Add Product"} - Eagle Zone Admin</title>
       </Helmet>
 
       <div className="max-w-4xl mx-auto space-y-6">

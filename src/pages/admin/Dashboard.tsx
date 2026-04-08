@@ -78,7 +78,7 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>Dashboard - High Mirror Admin</title>
+        <title>Dashboard - Eagle Zone Admin</title>
       </Helmet>
 
       <div className="space-y-8">
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent className="space-y-4 text-sm text-muted-foreground">
               <p>
-                Welcome to your High Mirror admin panel! Here you can manage your products,
+                Welcome to your Eagle Zone admin panel! Here you can manage your products,
                 categories, orders, and more.
               </p>
               <ul className="space-y-2">

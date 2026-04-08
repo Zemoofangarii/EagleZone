@@ -90,7 +90,7 @@ export default function Orders() {
   return (
     <MainLayout>
       <Helmet>
-        <title>My Orders - High Mirror</title>
+        <title>My Orders - Eagle Zone</title>
         <meta name="description" content="View your order history" />
       </Helmet>
 

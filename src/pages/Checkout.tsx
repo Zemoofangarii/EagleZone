@@ -156,7 +156,7 @@ export default function Checkout() {
   return (
     <MainLayout>
       <Helmet>
-        <title>Checkout - High Mirror</title>
+        <title>Checkout - Eagle Zone</title>
         <meta name="description" content="Complete your purchase" />
       </Helmet>
 

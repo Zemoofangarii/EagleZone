@@ -119,7 +119,7 @@ export function FloatingShoe() {
       >
         <img
           src={SHOE_IMAGE}
-          alt="High Mirror Shoe"
+          alt="Eagle Zone Shoe"
           className="w-full h-full object-contain drop-shadow-2xl"
           draggable={false}
         />
@@ -132,7 +132,7 @@ export function FloatingShoe() {
       >
         <img
           src={SHOE_IMAGE}
-          alt="High Mirror Shoe"
+          alt="Eagle Zone Shoe"
           className="w-full h-full object-contain drop-shadow-2xl"
           draggable={false}
         />

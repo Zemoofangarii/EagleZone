@@ -120,7 +120,7 @@ export default function Products() {
       <Helmet>
         <title>
           {selectedCategory ? `${selectedCategory.name} - ` : ""}
-          {featuredOnly ? "Featured Products" : "Shop All Products"} - High Mirror
+          {featuredOnly ? "Featured Products" : "Shop All Products"} - Eagle Zone
         </title>
         <meta
           name="description"

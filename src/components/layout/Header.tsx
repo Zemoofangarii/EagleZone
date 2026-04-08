@@ -137,7 +137,7 @@ export function Header() {
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            High Mirror
+            Eagle Zone
           </motion.span>
         </Link>
 

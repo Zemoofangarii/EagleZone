@@ -72,7 +72,7 @@ export default function CategoriesList() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>Categories - High Mirror Admin</title>
+        <title>Categories - Eagle Zone Admin</title>
       </Helmet>
 
       <div className="space-y-6">

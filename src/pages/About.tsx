@@ -51,7 +51,7 @@ const values = [
 ];
 
 const timeline = [
-  { year: "2023", title: "The Beginning", description: "High Mirror was born from a passion for premium products and exceptional customer experiences." },
+  { year: "2023", title: "The Beginning", description: "Eagle Zone was born from a passion for premium products and exceptional customer experiences." },
   { year: "2023", title: "First 1,000 Customers", description: "Reached our first milestone, proving that quality and trust resonate with shoppers everywhere." },
   { year: "2024", title: "Global Expansion", description: "Expanded our reach to serve customers across 30+ countries with localized shipping." },
   { year: "2025", title: "10K+ Community", description: "Grew our community to over 10,000 loyal customers and 500+ premium products." },
@@ -61,10 +61,10 @@ export default function About() {
   return (
     <MainLayout>
       <Helmet>
-        <title>About Us - High Mirror</title>
+        <title>About Us - Eagle Zone</title>
         <meta
           name="description"
-          content="Discover the story behind High Mirror - your destination for premium, curated products. Quality meets elegance."
+          content="Discover the story behind Eagle Zone - your destination for premium, curated products. Quality meets elegance."
         />
       </Helmet>
 
@@ -88,7 +88,7 @@ export default function About() {
             </FadeUp>
             <FadeUp delay={0.3}>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                At High Mirror, we believe everyone deserves access to
+                At Eagle Zone, we believe everyone deserves access to
                 exceptional products. We curate the finest selection of premium
                 goods, bringing quality and elegance to your doorstep.
               </p>
@@ -138,7 +138,7 @@ export default function About() {
                   Elevating Everyday Essentials
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  We started High Mirror with a simple belief: premium products
+                  We started Eagle Zone with a simple belief: premium products
                   shouldn't come with premium hassles. Our mission is to make
                   luxury accessible, authentic, and effortless.
                 </p>
@@ -227,7 +227,7 @@ export default function About() {
               Our Journey
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold mt-4">
-              The High Mirror Story
+              The Eagle Zone Story
             </h2>
           </FadeInView>
 
@@ -274,7 +274,7 @@ export default function About() {
                   <span className="gradient-text">Premium?</span>
                 </h2>
                 <p className="text-muted-foreground max-w-lg mx-auto">
-                  Join thousands of satisfied customers who trust High Mirror
+                  Join thousands of satisfied customers who trust Eagle Zone
                   for their premium product needs.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">

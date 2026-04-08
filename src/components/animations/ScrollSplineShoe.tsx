@@ -41,8 +41,8 @@ const showcaseSteps = [
   {
     title: "Mirror Reflection",
     description:
-      "See yourself elevated. The High Mirror signature — where streetwear meets haute couture.",
-    accent: "High Mirror Signature",
+      "See yourself elevated. The Eagle Zone signature — where streetwear meets haute couture.",
+    accent: "Eagle Zone Signature",
   },
 ];
 
@@ -217,7 +217,7 @@ export function ScrollSplineShoe() {
             <img
               ref={shoeRef}
               src={SHOE_IMAGE}
-              alt="High Mirror Signature Shoe"
+              alt="Eagle Zone Signature Shoe"
               className="w-full h-full object-contain drop-shadow-2xl select-none pointer-events-none opacity-0"
               draggable={false}
             />

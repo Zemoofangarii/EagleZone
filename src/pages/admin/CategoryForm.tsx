@@ -144,7 +144,7 @@ export default function CategoryForm() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>{isEditing ? "Edit Category" : "Add Category"} - High Mirror Admin</title>
+        <title>{isEditing ? "Edit Category" : "Add Category"} - Eagle Zone Admin</title>
       </Helmet>
 
       <div className="max-w-2xl mx-auto space-y-6">

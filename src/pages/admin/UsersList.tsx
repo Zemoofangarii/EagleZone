@@ -168,7 +168,7 @@ export default function UsersList() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>Users - High Mirror Admin</title>
+        <title>Users - Eagle Zone Admin</title>
       </Helmet>
 
       <div className="space-y-6">

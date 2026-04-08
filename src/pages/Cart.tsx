@@ -36,7 +36,7 @@ export default function Cart() {
   return (
     <MainLayout>
       <Helmet>
-        <title>Shopping Cart - High Mirror</title>
+        <title>Shopping Cart - Eagle Zone</title>
         <meta name="description" content="Review your shopping cart and proceed to checkout." />
       </Helmet>
 

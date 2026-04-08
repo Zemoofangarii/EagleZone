@@ -90,7 +90,7 @@ export default function ProductsList() {
   return (
     <AdminLayout>
       <Helmet>
-        <title>Products - High Mirror Admin</title>
+        <title>Products - Eagle Zone Admin</title>
       </Helmet>
 
       <div className="space-y-6">
